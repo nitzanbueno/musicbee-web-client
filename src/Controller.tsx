@@ -2,6 +2,7 @@ import { makeStyles, Paper } from "@material-ui/core";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { MusicBeeAPI } from "./MusicBeeAPI";
 import NowPlaying from "./NowPlaying";
+import Playlists from "./Playlists";
 
 const useStyles = makeStyles({
     container: {
@@ -28,6 +29,7 @@ const Controller: React.FC<{}> = () => {
     return (
         <Paper elevation={5} className={classes.container}>
             <NowPlaying mbState={state} setState={dispatch} API={API} />
+            <Playlists API={API} />
             <div>
                 Custom:
                 <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />
