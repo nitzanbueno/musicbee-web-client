@@ -22,41 +22,16 @@ export type MusicBeeStateDispatch = (action: RecursivePartial<MusicBeeState>) =>
 export class MusicBeeAPI {
     static ENDPOINT: string = "ws://127.0.0.1:5000";
 
-    static Reducer(prevState: MusicBeeState, action: RecursivePartial<MusicBeeState>): MusicBeeState {
-        const result: any = { ...prevState };
-
-        for (const i of Object.keys(action)) {
-            // @ts-ignore
-            const newValue: any = action[i];
-            if (typeof newValue === "object") {
-                result[i] = { ...result[i], ...newValue };
-            } else {
-                result[i] = newValue;
-            }
-        }
-
-        return result;
-    }
-
-    static InitialState: MusicBeeState = {
-        playerStatus: {
-            playerMute: false,
-            playerRepeat: "",
-            playerShuffle: false,
-            playerState: "",
-            playerVolume: "",
-        },
-        trackTime: 0,
-        trackLength: 0,
-        nowPlayingTrack: { artist: "", title: "", album: "", year: "" },
-    };
-
     webSocket?: WebSocket;
 
-    constructor(
-        public dispatch: (action: RecursivePartial<MusicBeeState>) => void,
-        private eventListeners: { [message: string]: EventListener[] } = {}
-    ) {}
+    eventListeners: { [message: string]: EventListener[] } = {
+        protocol: [],
+        player: [],
+        playerplaypause: [],
+        ping: [() => this.sendMessage("pong", "")],
+    };
+
+    constructor(private onLoad: () => void) {}
 
     initialize() {
         this.webSocket = new WebSocket(MusicBeeAPI.ENDPOINT);
@@ -69,9 +44,7 @@ export class MusicBeeAPI {
     runHandshake = () => {
         this.sendMessage("player", "Web");
         this.sendMessage("protocol", { no_broadcast: false, protocol_version: 5, client_id: "mb_web" });
-        this.sendMessage("init", "");
-        this.sendMessage("playerstatus", "");
-        this.sendMessage("nowplayingposition", true);
+        this.onLoad();
     };
 
     onMessage = (message: MessageEvent<string>) => {
@@ -83,43 +56,8 @@ export class MusicBeeAPI {
             for (const listener of this.eventListeners[context]) {
                 listener(data);
             }
-        }
-
-        switch (context) {
-            case "protocol":
-            case "player":
-            case "playerplaypause": // This seems to always return what I send...
-                return;
-            case "ping":
-                this.sendMessage("pong", "");
-                break;
-            case "nowplayingposition":
-                this.dispatch({ trackTime: data.current, trackLength: data.total });
-                break;
-            case "nowplayingtrack":
-                this.dispatch({ nowPlayingTrack: data });
-                break;
-            case "playerstate":
-                this.dispatch({ playerStatus: { playerState: data } });
-                break;
-            case "playervolume":
-                this.dispatch({ playerStatus: { playerVolume: data } });
-                break;
-            case "playerstatus":
-                console.log(data);
-                this.dispatch({
-                    playerStatus: {
-                        playerMute: data.playermute,
-                        playerRepeat: data.playerrepeat,
-                        playerShuffle: data.playershuffle,
-                        playerState: data.playerstate,
-                        playerVolume: data.playervolume,
-                    },
-                });
-                break;
-            default:
-                console.log("Message:", parsedMessageData);
-                break;
+        } else {
+            console.log("Message:", parsedMessageData);
         }
     };
 

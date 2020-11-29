@@ -1,7 +1,7 @@
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
 import { PlayArrow, Pause } from "@material-ui/icons";
-import React from "react";
-import { MusicBeeAPI, MusicBeeState, MusicBeeStateDispatch } from "./MusicBeeAPI";
+import React, { useEffect, useReducer, useState } from "react";
+import { MusicBeeAPI } from "./MusicBeeAPI";
 
 const useStyles = makeStyles({
     seek: {
@@ -47,41 +47,111 @@ function millisecondsToTime(millis: number) {
     return hourString + minString + ":" + secString;
 }
 
-const NowPlaying: React.FC<{ mbState: MusicBeeState; API: MusicBeeAPI; setState: MusicBeeStateDispatch }> = ({ mbState, API, setState }) => {
+function useObjectReducer<T>(initialState: T) {
+    return useReducer<React.Reducer<T, Partial<T>>>(
+        (prevState: T, newPartialState: Partial<T>) => ({ ...prevState, ...newPartialState }),
+        initialState
+    );
+}
+
+const NowPlaying: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     const classes = useStyles();
+    const [serverTrackTime, setServerTrackTime] = useState({ current: 0, total: 0 });
+    const [trackTime, setTrackTime] = useObjectReducer({ current: 0, total: 0 });
+    const [nowPlayingTrack, setNowPlayingTrack] = useState({ title: "", artist: "", album: "", year: "" });
+    const [playerStatus, setPlayerStatus] = useObjectReducer({
+        playerMute: false,
+        playerRepeat: "",
+        playerShuffle: false,
+        playerState: "",
+        playerVolume: "",
+    });
+
+    useEffect(() => {
+        const playerStateCallback = (playerState) => setPlayerStatus({ playerState });
+
+        const playerStatusCallback = ({ playerstate, playerrepeat, playershuffle, playermute, playervolume }) => {
+            setPlayerStatus({
+                playerState: playerstate,
+                playerMute: playermute,
+                playerRepeat: playerrepeat,
+                playerShuffle: playershuffle,
+                playerVolume: playervolume,
+            });
+        };
+
+        const playerVolumeCallback = (playerVolume) => setPlayerStatus({ playerVolume });
+
+        API.addEventListener("nowplayingposition", setServerTrackTime);
+        API.addEventListener("nowplayingtrack", setNowPlayingTrack);
+        API.addEventListener("playerstate", playerStateCallback);
+        API.addEventListener("playervolume", playerVolumeCallback);
+        API.addEventListener("playerstatus", playerStatusCallback);
+
+        return () => {
+            API.removeEventListener("nowplayingposition", setTrackTime);
+            API.removeEventListener("nowplayingtrack", setNowPlayingTrack);
+            API.removeEventListener("playerstate", playerStateCallback);
+            API.removeEventListener("playervolume", playerVolumeCallback);
+            API.removeEventListener("playerstatus", playerStatusCallback);
+        };
+    }, [API, setTrackTime, setNowPlayingTrack, setPlayerStatus]);
+
+    useEffect(() => {
+        API.sendMessage("init", "");
+        API.sendMessage("playerstatus", "");
+        API.sendMessage("nowplayingposition", true);
+    }, [API]);
+
+    useEffect(() => {
+        console.log("Affected");
+        setTrackTime({ ...serverTrackTime });
+
+        let extraTime = 0;
+
+        // Set the track time to change every second
+        const interval = setInterval(() => {
+            if (playerStatus.playerState === "Playing") {
+                extraTime += 1000;
+                setTrackTime({ current: Math.min(serverTrackTime.current + extraTime, serverTrackTime.total) });
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [serverTrackTime, setTrackTime, playerStatus.playerState]);
 
     return (
         <>
             <h4>Now Playing:</h4>
-            <h2>{mbState.nowPlayingTrack.title}</h2>
-            <h3>{mbState.nowPlayingTrack.artist}</h3>
+            <h2>{nowPlayingTrack.title}</h2>
+            <h3>{nowPlayingTrack.artist}</h3>
             <h3>
-                {mbState.nowPlayingTrack.album} ({mbState.nowPlayingTrack.year})
+                {nowPlayingTrack.album} ({nowPlayingTrack.year})
             </h3>
             <IconButton onClick={() => API.playPause()} color="primary">
-                {mbState.playerStatus.playerState === "Paused" ? <PlayArrow /> : <Pause />}
+                {playerStatus.playerState === "Paused" ? <PlayArrow /> : <Pause />}
             </IconButton>
             <div className={classes.seekAndVolumeContainer}>
                 <div className={classes.seekContainer}>
-                    {millisecondsToTime(mbState.trackTime)}
+                    {millisecondsToTime(trackTime.current)}
                     <Slider
-                        onChange={(_, value) => setState({ trackTime: value as number })}
+                        onChange={(_, value) => setTrackTime({ current: value as number })}
                         onChangeCommitted={(_, value) => API.seek(value as number)}
                         className={classes.seek}
-                        value={mbState.trackTime}
-                        max={mbState.trackLength}
+                        value={trackTime.current}
+                        max={trackTime.total}
                     />
-                    {millisecondsToTime(mbState.trackLength)}
+                    {millisecondsToTime(trackTime.total)}
                 </div>
                 <div className={classes.volumeContainer}>
                     <Slider
                         className={classes.volumeSlider}
-                        value={parseInt(mbState.playerStatus.playerVolume)}
+                        value={parseInt(playerStatus.playerVolume)}
                         max={100}
-                        onChange={(_, value) => setState({ playerStatus: { playerVolume: value.toString() } })}
+                        onChange={(_, value) => setPlayerStatus({ playerVolume: value.toString() })}
                         onChangeCommitted={(_, value) => API.setVolume(value as number)}
                     />
-                    {mbState.playerStatus.playerVolume}
+                    {playerStatus.playerVolume}
                 </div>
             </div>
         </>
