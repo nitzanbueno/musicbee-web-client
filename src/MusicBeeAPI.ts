@@ -1,4 +1,4 @@
-interface State {
+export interface MusicBeeState {
     playerStatus: {
         playerMute: boolean;
         playerRepeat: string;
@@ -15,10 +15,12 @@ type RecursivePartial<T> = {
     [P in keyof T]?: Partial<T[P]>;
 };
 
+export type MusicBeeStateDispatch = (action: RecursivePartial<MusicBeeState>) => void;
+
 export class MusicBeeAPI {
     static ENDPOINT: string = "ws://127.0.0.1:5000";
 
-    static Reducer(prevState: State, action: RecursivePartial<State>): State {
+    static Reducer(prevState: MusicBeeState, action: RecursivePartial<MusicBeeState>): MusicBeeState {
         const result: any = { ...prevState };
 
         for (const i of Object.keys(action)) {
@@ -34,7 +36,7 @@ export class MusicBeeAPI {
         return result;
     }
 
-    static InitialState: State = {
+    static InitialState: MusicBeeState = {
         playerStatus: {
             playerMute: false,
             playerRepeat: "",
@@ -48,7 +50,7 @@ export class MusicBeeAPI {
     };
 
     webSocket?: WebSocket;
-    constructor(public dispatch: (action: RecursivePartial<State>) => void) {}
+    constructor(public dispatch: (action: RecursivePartial<MusicBeeState>) => void) {}
 
     initialize() {
         this.webSocket = new WebSocket(MusicBeeAPI.ENDPOINT);
