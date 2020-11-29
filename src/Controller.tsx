@@ -1,7 +1,8 @@
 import { makeStyles, Paper } from "@material-ui/core";
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MusicBeeAPI } from "./MusicBeeAPI";
-import NowPlaying from "./NowPlaying";
+import NowPlayingList from "./NowPlayingList";
+import PlayerControls from "./PlayerControls";
 import Playlists from "./Playlists";
 
 const useStyles = makeStyles({
@@ -30,8 +31,11 @@ const Controller: React.FC<{}> = () => {
         <Paper elevation={5} className={classes.container}>
             {loaded ? (
                 <>
-                    <NowPlaying API={API} />
-                    <Playlists API={API} />
+                    <PlayerControls API={API} />
+                    <div style={{ display: "flex" }}>
+                        <Playlists API={API} />
+                        <NowPlayingList API={API} />
+                    </div>
                     <div>
                         Custom:
                         <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />

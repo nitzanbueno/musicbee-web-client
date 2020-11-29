@@ -54,7 +54,7 @@ function useObjectReducer<T>(initialState: T) {
     );
 }
 
-const NowPlaying: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
+const PlayerControls: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     const classes = useStyles();
     const [serverTrackTime, setServerTrackTime] = useState({ current: 0, total: 0 });
     const [trackTime, setTrackTime] = useObjectReducer({ current: 0, total: 0 });
@@ -157,4 +157,4 @@ const NowPlaying: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     );
 };
 
-export default NowPlaying;
+export default PlayerControls;
