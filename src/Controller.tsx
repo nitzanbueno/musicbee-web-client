@@ -11,14 +11,6 @@ const useStyles = makeStyles({
         flexDirection: "column",
         alignItems: "center",
     },
-    playbarContainer: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "row",
-    },
-    playbar: {
-        margin: "0px 20px",
-    },
 });
 
 const Controller: React.FC<{}> = () => {
@@ -35,7 +27,7 @@ const Controller: React.FC<{}> = () => {
 
     return (
         <Paper elevation={5} className={classes.container}>
-            <NowPlaying mbState={state} setState={dispatch} API={API} classes={classes} />
+            <NowPlaying mbState={state} setState={dispatch} API={API} />
             <div>
                 Custom:
                 <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />

@@ -1,9 +1,36 @@
-import { IconButton, Slider } from "@material-ui/core";
+import { IconButton, makeStyles, Slider } from "@material-ui/core";
 import { PlayArrow, Pause } from "@material-ui/icons";
 import React from "react";
 import { MusicBeeAPI, MusicBeeState, MusicBeeStateDispatch } from "./MusicBeeAPI";
 
-function millisToTime(millis: number) {
+const useStyles = makeStyles({
+    seek: {
+        margin: "0px 5px",
+    },
+    volumeSlider: {
+        width: 200,
+        marginRight: 10,
+    },
+    seekAndVolumeContainer: {
+        display: "flex",
+        alignItems: "center",
+        width: "80%",
+        justifyContent: "space-between",
+    },
+    volumeContainer: {
+        display: "flex",
+        alignItems: "center",
+        marginLeft: 30,
+    },
+    seekContainer: {
+        display: "flex",
+        alignItems: "center",
+        width: "80%",
+        justifyContent: "start",
+    },
+});
+
+function millisecondsToTime(millis: number) {
     const totalSeconds = Math.floor(millis / 1000);
 
     const seconds = totalSeconds % 60;
@@ -20,12 +47,9 @@ function millisToTime(millis: number) {
     return hourString + minString + ":" + secString;
 }
 
-const NowPlaying: React.FC<{ mbState: MusicBeeState; API: MusicBeeAPI; setState: MusicBeeStateDispatch; classes: any }> = ({
-    mbState,
-    API,
-    setState,
-    classes,
-}) => {
+const NowPlaying: React.FC<{ mbState: MusicBeeState; API: MusicBeeAPI; setState: MusicBeeStateDispatch }> = ({ mbState, API, setState }) => {
+    const classes = useStyles();
+
     return (
         <>
             <h4>Now Playing:</h4>
@@ -37,16 +61,28 @@ const NowPlaying: React.FC<{ mbState: MusicBeeState; API: MusicBeeAPI; setState:
             <IconButton onClick={() => API.playPause()} color="primary">
                 {mbState.playerStatus.playerState === "Paused" ? <PlayArrow /> : <Pause />}
             </IconButton>
-            <div className={classes.playbarContainer}>
-                {millisToTime(mbState.trackTime)}
-                <Slider
-                    onChange={(_, value) => setState({ trackTime: value as number })}
-                    onChangeCommitted={(_, value) => API.seek(value as number)}
-                    className={classes.playbar}
-                    value={mbState.trackTime}
-                    max={mbState.trackLength}
-                />
-                {millisToTime(mbState.trackLength)}
+            <div className={classes.seekAndVolumeContainer}>
+                <div className={classes.seekContainer}>
+                    {millisecondsToTime(mbState.trackTime)}
+                    <Slider
+                        onChange={(_, value) => setState({ trackTime: value as number })}
+                        onChangeCommitted={(_, value) => API.seek(value as number)}
+                        className={classes.seek}
+                        value={mbState.trackTime}
+                        max={mbState.trackLength}
+                    />
+                    {millisecondsToTime(mbState.trackLength)}
+                </div>
+                <div className={classes.volumeContainer}>
+                    <Slider
+                        className={classes.volumeSlider}
+                        value={parseInt(mbState.playerStatus.playerVolume)}
+                        max={100}
+                        onChange={(_, value) => setState({ playerStatus: { playerVolume: value.toString() } })}
+                        onChangeCommitted={(_, value) => API.setVolume(value as number)}
+                    />
+                    {mbState.playerStatus.playerVolume}
+                </div>
             </div>
         </>
     );
