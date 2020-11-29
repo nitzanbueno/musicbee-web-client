@@ -104,7 +104,6 @@ const NowPlaying: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     }, [API]);
 
     useEffect(() => {
-        console.log("Affected");
         setTrackTime({ ...serverTrackTime });
 
         let extraTime = 0;

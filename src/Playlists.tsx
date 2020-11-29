@@ -1,7 +1,6 @@
-import { IconButton, makeStyles, Slider } from "@material-ui/core";
-import { PlayArrow, Pause } from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import { MusicBeeAPI, MusicBeeState, MusicBeeStateDispatch } from "./MusicBeeAPI";
+import { MusicBeeAPI } from "./MusicBeeAPI";
 
 const useStyles = makeStyles({
     seek: {
@@ -46,10 +45,11 @@ const Playlists: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     return (
         <>
             Playlists:
-            <button onClick={() => API.sendMessage("playlistlist", { offset: 0, limit: 100 })}>Try again?</button>
             <select multiple>
-                {playlistNames.map(({ name }) => (
-                    <option key={name}>{name}</option>
+                {playlistNames.map(({ name, url }) => (
+                    <option onDoubleClick={() => API.sendMessage("playlistplay", url)} key={name}>
+                        {name}
+                    </option>
                 ))}
             </select>
         </>
