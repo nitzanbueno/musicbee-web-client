@@ -15,6 +15,8 @@ type RecursivePartial<T> = {
     [P in keyof T]?: Partial<T[P]>;
 };
 
+type EventListener = (data: any) => void;
+
 export type MusicBeeStateDispatch = (action: RecursivePartial<MusicBeeState>) => void;
 
 export class MusicBeeAPI {
@@ -50,7 +52,11 @@ export class MusicBeeAPI {
     };
 
     webSocket?: WebSocket;
-    constructor(public dispatch: (action: RecursivePartial<MusicBeeState>) => void) {}
+
+    constructor(
+        public dispatch: (action: RecursivePartial<MusicBeeState>) => void,
+        private eventListeners: { [message: string]: EventListener[] } = {}
+    ) {}
 
     initialize() {
         this.webSocket = new WebSocket(MusicBeeAPI.ENDPOINT);
@@ -73,6 +79,12 @@ export class MusicBeeAPI {
 
         const { context, data } = parsedMessageData;
 
+        if (this.eventListeners[context]) {
+            for (const listener of this.eventListeners[context]) {
+                listener(data);
+            }
+        }
+
         switch (context) {
             case "protocol":
             case "player":
@@ -89,6 +101,9 @@ export class MusicBeeAPI {
                 break;
             case "playerstate":
                 this.dispatch({ playerStatus: { playerState: data } });
+                break;
+            case "playervolume":
+                this.dispatch({ playerStatus: { playerVolume: data } });
                 break;
             case "playerstatus":
                 console.log(data);
@@ -108,7 +123,19 @@ export class MusicBeeAPI {
         }
     };
 
+    addEventListener(message: string, listener: EventListener) {
+        if (!this.eventListeners[message]) this.eventListeners[message] = [];
+        this.eventListeners[message].push(listener);
+    }
+
+    removeEventListener(message: string, listener: EventListener) {
+        if (!this.eventListeners[message]) return;
+
+        this.eventListeners[message] = this.eventListeners[message].filter((x) => x != listener);
+    }
+
     seek = (seekTo: number) => this.sendMessage("nowplayingposition", seekTo);
+    setVolume = (volume: number) => this.sendMessage("playervolume", volume);
 
     browseAlbums = () => {
         // TODO: set the limit smarter
