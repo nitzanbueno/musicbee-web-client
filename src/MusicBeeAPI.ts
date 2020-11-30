@@ -39,7 +39,7 @@ export class MusicBeeAPI {
         this.webSocket.addEventListener("message", this.onMessage);
     }
 
-    sendMessage = (context: string, data: any) => this.webSocket?.send(JSON.stringify({ context, data }));
+    sendMessage = (context: string, data: any = "") => this.webSocket?.send(JSON.stringify({ context, data }));
 
     runHandshake = () => {
         this.sendMessage("player", "Web");
@@ -81,6 +81,14 @@ export class MusicBeeAPI {
     };
 
     playPause = () => {
-        this.sendMessage("playerplaypause", true);
+        this.sendMessage("playerplaypause");
+    };
+
+    skipPrevious = () => {
+        this.sendMessage("playerprevious");
+    };
+
+    skipNext = () => {
+        this.sendMessage("playernext");
     };
 }

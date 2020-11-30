@@ -1,21 +1,18 @@
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
-import { PlayArrow, Pause } from "@material-ui/icons";
+import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext } from "@material-ui/icons";
 import React, { useEffect, useReducer, useState } from "react";
 import { MusicBeeAPI } from "./MusicBeeAPI";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     seek: {
         margin: "0px 5px",
+        color: theme.palette.primary.light,
     },
     volumeSlider: {
         width: 200,
         marginRight: 10,
-    },
-    seekAndVolumeContainer: {
-        display: "flex",
-        alignItems: "center",
-        width: "80%",
-        justifyContent: "space-between",
+        marginLeft: 10,
+        color: theme.palette.primary.light,
     },
     volumeContainer: {
         display: "flex",
@@ -25,10 +22,31 @@ const useStyles = makeStyles({
     seekContainer: {
         display: "flex",
         alignItems: "center",
-        width: "80%",
+        width: "60%",
         justifyContent: "start",
     },
-});
+    metadata: {
+        display: "flex",
+        flexDirection: "column",
+    },
+    controlButtonGroup: {
+        display: "flex",
+        alignItems: "center",
+    },
+    bar: {
+        position: "absolute",
+        bottom: 0,
+        padding: "0 20px",
+        width: "100%",
+        display: "flex",
+        justifyContent: "space-around",
+        backgroundColor: theme.palette.grey[800],
+        color: theme.palette.grey[300],
+    },
+    controlButton: {
+        color: theme.palette.primary.light,
+    },
+}));
 
 function millisecondsToTime(millis: number) {
     const totalSeconds = Math.floor(millis / 1000);
@@ -120,40 +138,49 @@ const PlayerControls: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     }, [serverTrackTime, setTrackTime, playerStatus.playerState]);
 
     return (
-        <>
-            <h4>Now Playing:</h4>
-            <h2>{nowPlayingTrack.title}</h2>
-            <h3>{nowPlayingTrack.artist}</h3>
-            <h3>
-                {nowPlayingTrack.album} ({nowPlayingTrack.year})
-            </h3>
-            <IconButton onClick={() => API.playPause()} color="primary">
-                {playerStatus.playerState === "Paused" ? <PlayArrow /> : <Pause />}
-            </IconButton>
-            <div className={classes.seekAndVolumeContainer}>
-                <div className={classes.seekContainer}>
-                    {millisecondsToTime(trackTime.current)}
-                    <Slider
-                        onChange={(_, value) => setTrackTime({ current: value as number })}
-                        onChangeCommitted={(_, value) => API.seek(value as number)}
-                        className={classes.seek}
-                        value={trackTime.current}
-                        max={trackTime.total}
-                    />
-                    {millisecondsToTime(trackTime.total)}
-                </div>
-                <div className={classes.volumeContainer}>
-                    <Slider
-                        className={classes.volumeSlider}
-                        value={parseInt(playerStatus.playerVolume)}
-                        max={100}
-                        onChange={(_, value) => setPlayerStatus({ playerVolume: value.toString() })}
-                        onChangeCommitted={(_, value) => API.setVolume(value as number)}
-                    />
-                    {playerStatus.playerVolume}
-                </div>
+        <div className={classes.bar}>
+            <div className={classes.metadata}>
+                <b>{nowPlayingTrack.title}</b>
+                <span>{nowPlayingTrack.artist}</span>
+                <span>
+                    {nowPlayingTrack.album} ({nowPlayingTrack.year})
+                </span>
             </div>
-        </>
+            <div className={classes.controlButtonGroup}>
+                <IconButton onClick={() => API.skipPrevious()} className={classes.controlButton}>
+                    <SkipPrevious />
+                </IconButton>
+                <IconButton onClick={() => API.playPause()} className={classes.controlButton}>
+                    {playerStatus.playerState === "Paused" ? <PlayArrow /> : <Pause />}
+                </IconButton>
+                <IconButton onClick={() => API.skipNext()} className={classes.controlButton}>
+                    <SkipNext />
+                </IconButton>
+            </div>
+
+            <div className={classes.seekContainer}>
+                {millisecondsToTime(trackTime.current)}
+                <Slider
+                    onChange={(_, value) => setTrackTime({ current: value as number })}
+                    onChangeCommitted={(_, value) => API.seek(value as number)}
+                    className={classes.seek}
+                    value={trackTime.current}
+                    max={trackTime.total}
+                />
+                {millisecondsToTime(trackTime.total)}
+            </div>
+            <div className={classes.volumeContainer}>
+                <VolumeUp />
+                <Slider
+                    className={classes.volumeSlider}
+                    value={parseInt(playerStatus.playerVolume)}
+                    max={100}
+                    onChange={(_, value) => setPlayerStatus({ playerVolume: value.toString() })}
+                    onChangeCommitted={(_, value) => API.setVolume(value as number)}
+                />
+                {playerStatus.playerVolume}
+            </div>
+        </div>
     );
 };
 

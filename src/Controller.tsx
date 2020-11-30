@@ -5,15 +5,17 @@ import NowPlayingList from "./NowPlayingList";
 import PlayerControls from "./PlayerControls";
 import Playlists from "./Playlists";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     container: {
-        width: "80%",
-        height: "80%",
+        width: "100vw",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        position: "absolute",
+        backgroundColor: theme.palette.background.default,
     },
-});
+}));
 
 const Controller: React.FC<{}> = () => {
     const [loaded, setLoaded] = useState(false);
