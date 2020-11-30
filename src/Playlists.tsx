@@ -47,7 +47,7 @@ const Playlists: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
             Playlists:
             <select multiple>
                 {playlistNames.map(({ name, url }) => (
-                    <option onDoubleClick={() => API.sendMessage("playlistplay", url)} key={name}>
+                    <option onClick={() => console.log(url)} onDoubleClick={() => API.sendMessage("playlistplay", url)} key={name}>
                         {name}
                     </option>
                 ))}

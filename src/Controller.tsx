@@ -9,11 +9,14 @@ const useStyles = makeStyles((theme) => ({
     container: {
         width: "100vw",
         height: "100vh",
-        display: "flex",
+        display: "grid",
         flexDirection: "column",
         alignItems: "center",
         position: "absolute",
         backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        gridTemplateColumns: "400px auto",
+        gridTemplateRows: "auto 100px",
     },
 }));
 
@@ -30,25 +33,23 @@ const Controller: React.FC<{}> = () => {
     const [customData, setCustomData] = useState("");
 
     return (
-        <Paper elevation={5} className={classes.container}>
+        <div className={classes.container}>
             {loaded ? (
                 <>
-                    <PlayerControls API={API} />
-                    <div style={{ display: "flex" }}>
+                    <NowPlayingList API={API} />
+                    <div style={{ gridColumn: "2 3", gridRow: "1 2" }}>
                         <Playlists API={API} />
-                        <NowPlayingList API={API} />
-                    </div>
-                    <div>
                         Custom:
                         <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />
                         <input onChange={(e) => setCustomData(e.target.value)} value={customData} />
                         <button onClick={() => API.sendMessage(customContext, JSON.parse(customData))}>Send</button>
                     </div>
+                    <PlayerControls API={API} />
                 </>
             ) : (
                 "Loading..."
             )}
-        </Paper>
+        </div>
     );
 };
 

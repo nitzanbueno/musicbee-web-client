@@ -1,33 +1,21 @@
-import { makeStyles } from "@material-ui/core";
+import { IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from "@material-ui/core";
+import { PlayArrow } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { MusicBeeAPI } from "./MusicBeeAPI";
 
-const useStyles = makeStyles({
-    seek: {
-        margin: "0px 5px",
+const useStyles = makeStyles((theme) => ({
+    container: {
+        left: 0,
+        width: 400,
+        backgroundColor: theme.palette.grey[600],
+        gridRowStart: 1,
+        gridRowEnd: 2,
+        gridColumnStart: 1,
+        gridColumnEnd: 2,
+        maxHeight: "100%",
+        overflowY: "scroll",
     },
-    volumeSlider: {
-        width: 200,
-        marginRight: 10,
-    },
-    seekAndVolumeContainer: {
-        display: "flex",
-        alignItems: "center",
-        width: "80%",
-        justifyContent: "space-between",
-    },
-    volumeContainer: {
-        display: "flex",
-        alignItems: "center",
-        marginLeft: 30,
-    },
-    seekContainer: {
-        display: "flex",
-        alignItems: "center",
-        width: "80%",
-        justifyContent: "start",
-    },
-});
+}));
 
 interface NowPlayingSong {
     Artist: string;
@@ -38,6 +26,7 @@ interface NowPlayingSong {
 
 const NowPlayingList: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     const [nowPlayingSongs, setNowPlayingSongs] = useState<NowPlayingSong[]>([]);
+    const classes = useStyles();
 
     function handleNowPlayingList(data: NowPlayingSong[]) {
         console.log(data);
@@ -56,16 +45,21 @@ const NowPlayingList: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     }, [API]);
 
     return (
-        <>
-            Now Playing:
-            <select multiple>
-                {nowPlayingSongs.map(({ Title, Position }) => (
-                    <option onDoubleClick={() => API.sendMessage("nowplayinglistplay", Position)} key={Position}>
-                        {Position}. {Title}
-                    </option>
+        <div className={classes.container}>
+            <Typography variant="body1">Now Playing</Typography>
+            <List>
+                {nowPlayingSongs.map(({ Title, Position, Artist }) => (
+                    <ListItem key={Position}>
+                        <ListItemIcon>
+                            <IconButton onClick={() => API.sendMessage("nowplayinglistplay", Position)}>
+                                <PlayArrow />
+                            </IconButton>
+                        </ListItemIcon>
+                        <ListItemText primary={`${Title}`} secondary={Artist} />
+                    </ListItem>
                 ))}
-            </select>
-        </>
+            </List>
+        </div>
     );
 };
 

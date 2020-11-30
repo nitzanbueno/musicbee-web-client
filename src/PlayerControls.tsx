@@ -34,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
     },
     bar: {
-        position: "absolute",
-        bottom: 0,
+        gridColumn: "1 / -1",
+        gridRow: "2 / 3",
+        height: "100%",
         padding: "0 20px",
-        width: "100%",
         display: "flex",
         justifyContent: "space-around",
         backgroundColor: theme.palette.grey[800],
