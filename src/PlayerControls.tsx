@@ -4,6 +4,17 @@ import React, { useEffect, useReducer, useState } from "react";
 import { MusicBeeAPI } from "./MusicBeeAPI";
 
 const useStyles = makeStyles((theme) => ({
+    bar: {
+        gridColumn: "1 / -1",
+        gridRow: "2 / 3",
+        height: "100%",
+        padding: "0 20px",
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        backgroundColor: theme.palette.grey[800],
+        color: theme.palette.grey[300],
+    },
     seek: {
         margin: "0px 5px",
         color: theme.palette.primary.light,
@@ -33,16 +44,6 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         alignItems: "center",
     },
-    bar: {
-        gridColumn: "1 / -1",
-        gridRow: "2 / 3",
-        height: "100%",
-        padding: "0 20px",
-        display: "flex",
-        justifyContent: "space-around",
-        backgroundColor: theme.palette.grey[800],
-        color: theme.palette.grey[300],
-    },
     controlButton: {
         color: theme.palette.primary.light,
     },
@@ -65,11 +66,16 @@ function millisecondsToTime(millis: number) {
     return hourString + minString + ":" + secString;
 }
 
+type PartialSetStateAction<T> = Partial<T> | ((prev: T) => Partial<T>);
+
 function useObjectReducer<T>(initialState: T) {
-    return useReducer<React.Reducer<T, Partial<T>>>(
-        (prevState: T, newPartialState: Partial<T>) => ({ ...prevState, ...newPartialState }),
-        initialState
-    );
+    return useReducer<React.Reducer<T, PartialSetStateAction<T>>>((prevState: T, newPartialState: PartialSetStateAction<T>) => {
+        if (typeof newPartialState === "function") {
+            return { ...prevState, ...newPartialState(prevState) };
+        } else {
+            return { ...prevState, ...newPartialState };
+        }
+    }, initialState);
 }
 
 const PlayerControls: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
@@ -122,20 +128,18 @@ const PlayerControls: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
     }, [API]);
 
     useEffect(() => {
-        setTrackTime({ ...serverTrackTime });
-
-        let extraTime = 0;
-
         // Set the track time to change every second
+        // (approximately - this gets reset every once in a while when the server synchronizes the time)
         const interval = setInterval(() => {
             if (playerStatus.playerState === "Playing") {
-                extraTime += 1000;
-                setTrackTime({ current: Math.min(serverTrackTime.current + extraTime, serverTrackTime.total) });
+                setTrackTime((prev) => ({ current: Math.min(prev.current + 1000, prev.total) }));
             }
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [serverTrackTime, setTrackTime, playerStatus.playerState]);
+    }, [setTrackTime, playerStatus.playerState]);
+
+    useEffect(() => setTrackTime({ ...serverTrackTime }), [serverTrackTime, setTrackTime]);
 
     return (
         <div className={classes.bar}>
