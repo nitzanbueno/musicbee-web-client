@@ -1,9 +1,7 @@
-import { AppBar, fade, InputBase, makeStyles, Tab, Tabs, TextField } from "@material-ui/core";
+import { AppBar, fade, InputBase, makeStyles, Tab, Tabs } from "@material-ui/core";
 import React, { useState } from "react";
-import { MusicBeeAPI } from "./MusicBeeAPI";
 import { Search as SearchIcon } from "@material-ui/icons";
 // import Playlists from "./Playlists";
-import clsx from "clsx";
 import Playlists from "./Playlists";
 
 const useStyles = makeStyles((theme) => ({
@@ -84,7 +82,7 @@ const SearchBar: React.FC<{
     </div>
 );
 
-const MainWindow: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
+const MainWindow: React.FC<{}> = () => {
     // const [customContext, setCustomContext] = useState("");
     // const [customData, setCustomData] = useState("");
     const classes = useStyles();
@@ -103,7 +101,7 @@ const MainWindow: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
             </AppBar>
 
             {value === 0 && <div>Item 1</div>}
-            {value === 1 && <Playlists API={API} />}
+            {value === 1 && <Playlists />}
             {/* Custom: 
             <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />
             <input onChange={(e) => setCustomData(e.target.value)} value={customData} />

@@ -1,7 +1,7 @@
 import { IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from "@material-ui/core";
 import { PlayArrow } from "@material-ui/icons";
-import React, { useEffect, useState } from "react";
-import { MusicBeeAPI } from "./MusicBeeAPI";
+import React, { useContext, useEffect, useState } from "react";
+import { MusicBeeAPIContext } from "./MusicBeeAPI";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -24,7 +24,8 @@ interface NowPlayingSong {
     Title: string;
 }
 
-const NowPlayingList: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
+const NowPlayingList: React.FC<{}> = () => {
+    const API = useContext(MusicBeeAPIContext);
     const [nowPlayingSongs, setNowPlayingSongs] = useState<NowPlayingSong[]>([]);
     const classes = useStyles();
 

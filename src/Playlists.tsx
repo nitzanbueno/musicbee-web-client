@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import { MusicBeeAPI } from "./MusicBeeAPI";
+import React, { useContext, useEffect, useState } from "react";
+import { MusicBeeAPIContext } from "./MusicBeeAPI";
 
 const useStyles = makeStyles({
     seek: {
@@ -29,8 +29,9 @@ const useStyles = makeStyles({
     },
 });
 
-const Playlists: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
+const Playlists: React.FC<{}> = () => {
     const [playlistNames, setPlaylistNames] = useState([]);
+    const API = useContext(MusicBeeAPIContext);
 
     function handlePlaylists({ data, offset, limit, total }: any) {
         setPlaylistNames(data);

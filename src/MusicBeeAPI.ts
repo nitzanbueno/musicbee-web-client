@@ -1,3 +1,5 @@
+import { createContext } from "react";
+
 export interface MusicBeeState {
     playerStatus: {
         playerMute: boolean;
@@ -92,3 +94,6 @@ export class MusicBeeAPI {
         this.sendMessage("playernext");
     };
 }
+
+// I don't like setting a default value but I don't want to ts-ignore
+export const MusicBeeAPIContext = createContext<MusicBeeAPI>(new MusicBeeAPI(() => {}));

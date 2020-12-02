@@ -1,7 +1,7 @@
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
 import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext } from "@material-ui/icons";
-import React, { useEffect, useReducer, useState } from "react";
-import { MusicBeeAPI } from "./MusicBeeAPI";
+import React, { useContext, useEffect, useReducer, useState } from "react";
+import { MusicBeeAPIContext } from "./MusicBeeAPI";
 
 const useStyles = makeStyles((theme) => ({
     bar: {
@@ -78,7 +78,7 @@ function useObjectReducer<T>(initialState: T) {
     }, initialState);
 }
 
-const PlayerControls: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
+const PlayerControls: React.FC<{}> = () => {
     const classes = useStyles();
     const [serverTrackTime, setServerTrackTime] = useState({ current: 0, total: 0 });
     const [trackTime, setTrackTime] = useObjectReducer({ current: 0, total: 0 });
@@ -90,6 +90,7 @@ const PlayerControls: React.FC<{ API: MusicBeeAPI }> = ({ API }) => {
         playerState: "",
         playerVolume: "",
     });
+    const API = useContext(MusicBeeAPIContext);
 
     useEffect(() => {
         const playerStateCallback = (playerState) => setPlayerStatus({ playerState });

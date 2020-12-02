@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 import MainWindow from "./MainWindow";
-import { MusicBeeAPI } from "./MusicBeeAPI";
+import { MusicBeeAPI, MusicBeeAPIContext } from "./MusicBeeAPI";
 import NowPlayingList from "./NowPlayingList";
 import PlayerControls from "./PlayerControls";
 
@@ -29,17 +29,19 @@ const Controller: React.FC<{}> = () => {
     const classes = useStyles();
 
     return (
-        <div className={classes.container}>
-            {loaded ? (
-                <>
-                    <NowPlayingList API={API} />
-                    <MainWindow API={API} />
-                    <PlayerControls API={API} />
-                </>
-            ) : (
-                "Loading..."
-            )}
-        </div>
+        <MusicBeeAPIContext.Provider value={API}>
+            <div className={classes.container}>
+                {loaded ? (
+                    <>
+                        <NowPlayingList />
+                        <MainWindow />
+                        <PlayerControls />
+                    </>
+                ) : (
+                    "Loading..."
+                )}
+            </div>
+        </MusicBeeAPIContext.Provider>
     );
 };
 
