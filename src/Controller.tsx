@@ -1,9 +1,9 @@
-import { makeStyles, Paper } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
+import MainWindow from "./MainWindow";
 import { MusicBeeAPI } from "./MusicBeeAPI";
 import NowPlayingList from "./NowPlayingList";
 import PlayerControls from "./PlayerControls";
-import Playlists from "./Playlists";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme) => ({
         height: "100vh",
         display: "grid",
         flexDirection: "column",
-        alignItems: "center",
         position: "absolute",
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
@@ -29,21 +28,12 @@ const Controller: React.FC<{}> = () => {
 
     const classes = useStyles();
 
-    const [customContext, setCustomContext] = useState("");
-    const [customData, setCustomData] = useState("");
-
     return (
         <div className={classes.container}>
             {loaded ? (
                 <>
                     <NowPlayingList API={API} />
-                    <div style={{ gridColumn: "2 3", gridRow: "1 2" }}>
-                        <Playlists API={API} />
-                        Custom:
-                        <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />
-                        <input onChange={(e) => setCustomData(e.target.value)} value={customData} />
-                        <button onClick={() => API.sendMessage(customContext, JSON.parse(customData))}>Send</button>
-                    </div>
+                    <MainWindow API={API} />
                     <PlayerControls API={API} />
                 </>
             ) : (

@@ -43,8 +43,8 @@ export class MusicBeeAPI {
 
     runHandshake = () => {
         this.sendMessage("player", "Web");
+        this.addEventListener("protocol", this.onLoad);
         this.sendMessage("protocol", { no_broadcast: false, protocol_version: 5, client_id: "mb_web" });
-        this.onLoad();
     };
 
     onMessage = (message: MessageEvent<string>) => {

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
         gridRowEnd: 2,
         gridColumnStart: 1,
         gridColumnEnd: 2,
-        maxHeight: "100%",
+        height: "100%",
         overflowY: "scroll",
     },
 }));
