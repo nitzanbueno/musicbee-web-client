@@ -1,27 +1,8 @@
 import { createContext } from "react";
 
-export interface MusicBeeState {
-    playerStatus: {
-        playerMute: boolean;
-        playerRepeat: string;
-        playerShuffle: boolean;
-        playerState: string;
-        playerVolume: string;
-    };
-    trackTime: number;
-    trackLength: number;
-    nowPlayingTrack: { artist: string; title: string; album: string; year: string };
-}
-
-type RecursivePartial<T> = {
-    [P in keyof T]?: Partial<T[P]>;
-};
-
 type EventListener = (data: any) => void;
 
 export type QueueType = "next" | "last" | "add-all" | "now";
-
-export type MusicBeeStateDispatch = (action: RecursivePartial<MusicBeeState>) => void;
 
 export interface Track {
     album: string;
@@ -76,7 +57,7 @@ export class MusicBeeAPI {
                 listener(data);
             }
         } else {
-            console.log("Message:", parsedMessageData);
+        console.log("Message:", parsedMessageData);
         }
     };
 
@@ -124,7 +105,6 @@ export class MusicBeeAPI {
 
     queueTracks = (tracks: Track[], queueType: QueueType) => {
         const data = { data: tracks.map(track => track.src), queue: queueType, play: null };
-        console.log(data);
         this.sendMessage("nowplayingqueue", data);
     };
 

@@ -14,7 +14,7 @@ export interface PlayerStatus {
     playerMute: boolean;
     playerRepeat: string;
     playerShuffle: boolean;
-    playerState: string;
+    playerState: "Playing" | "Paused" | "Stopped" | "";
     playerVolume: string;
 }
 
@@ -65,7 +65,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
 
     // prettier-ignore
     useEffect(function wireUpCallbacks() {
-        const playerStateCallback = (playerState: string) => setPlayerStatus({ playerState });
+        const playerStateCallback = (playerState: MusicBeeInfo["playerStatus"]["playerState"]) => setPlayerStatus({ playerState });
         const playerVolumeCallback = (playerVolume: string) => setPlayerStatus({ playerVolume });
 
         API.addEventListener("nowplayingposition", setTrackTime);
