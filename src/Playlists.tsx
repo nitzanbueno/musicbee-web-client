@@ -1,14 +1,19 @@
-import { List, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
+import { ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
 import { PlaylistPlay } from "@material-ui/icons";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { MusicBeeAPIContext } from "./MusicBeeAPI";
+import VirtualList from "./VirtualList";
+
+const PLAYLIST_ITEM_HEIGHT = 60;
 
 const useStyles = makeStyles({
     playlistList: {
         width: "100%",
+        height: "100%",
     },
     playlistItem: {
         cursor: "pointer",
+        height: PLAYLIST_ITEM_HEIGHT + "px",
     },
 });
 
@@ -24,7 +29,7 @@ function doesPlaylistMatchSearchText(playlist: Playlist, searchText?: string) {
 }
 
 const Playlists: React.FC<{ searchText?: string }> = props => {
-    const [playlists, setPlaylists] = useState([]);
+    const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const API = useContext(MusicBeeAPIContext);
 
     const classes = useStyles();
@@ -41,20 +46,28 @@ const Playlists: React.FC<{ searchText?: string }> = props => {
     ]);
 
     return (
-        <List className={classes.playlistList}>
-            {filteredPlaylists.map(({ name, url }) => (
-                <ListItem
-                    onDoubleClick={() => API.sendMessage("playlistplay", url)}
-                    key={name}
-                    className={classes.playlistItem}
-                >
-                    <ListItemIcon>
-                        <PlaylistPlay />
-                    </ListItemIcon>
-                    <ListItemText primary={name} />
-                </ListItem>
-            ))}
-        </List>
+        <VirtualList
+            rowHeight={PLAYLIST_ITEM_HEIGHT}
+            rowCount={filteredPlaylists.length}
+            containerClassName={classes.playlistList}
+            rowRenderer={({ index, style }) => {
+                const playlist = filteredPlaylists[index];
+
+                return (
+                    <ListItem
+                        onDoubleClick={() => API.sendMessage("playlistplay", playlist.url)}
+                        key={index}
+                        className={classes.playlistItem}
+                        style={style}
+                    >
+                        <ListItemIcon>
+                            <PlaylistPlay />
+                        </ListItemIcon>
+                        <ListItemText primary={playlist.name} />
+                    </ListItem>
+                );
+            }}
+        ></VirtualList>
     );
 };
 
