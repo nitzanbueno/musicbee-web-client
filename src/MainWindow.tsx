@@ -1,8 +1,8 @@
 import { AppBar, fade, InputBase, makeStyles, Tab, Tabs } from "@material-ui/core";
 import React, { useState } from "react";
 import { Search as SearchIcon } from "@material-ui/icons";
-// import Playlists from "./Playlists";
 import Playlists from "./Playlists";
+import SongPicker from "./SongPicker";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -100,7 +100,7 @@ const MainWindow: React.FC<{}> = () => {
                 <SearchBar classes={classes} value={query} onChange={(e) => setQuery(e.target.value)} />
             </AppBar>
 
-            {value === 0 && <div>Item 1</div>}
+            {value === 0 && <SongPicker />}
             {value === 1 && <Playlists />}
             {/* Custom: 
             <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />

@@ -19,12 +19,26 @@ type RecursivePartial<T> = {
 
 type EventListener = (data: any) => void;
 
+export type QueueType = "next" | "last" | "add-all" | "now";
+
 export type MusicBeeStateDispatch = (action: RecursivePartial<MusicBeeState>) => void;
+
+export interface Track {
+    album: string;
+    album_artist: string;
+    artist: string;
+    disc: string;
+    genre: string;
+    src: string;
+    title: string;
+    trackno: number;
+}
 
 export class MusicBeeAPI {
     static ENDPOINT: string = "ws://127.0.0.1:5000";
 
     webSocket?: WebSocket;
+    allTracks?: Track[] = undefined;
 
     eventListeners: { [message: string]: EventListener[] } = {
         protocol: [],
@@ -36,6 +50,9 @@ export class MusicBeeAPI {
     constructor(private onLoad: () => void) {}
 
     initialize() {
+        // "browsetracks" data is relatively big, so it should be kept on API level
+        this.addEventListener("browsetracks", ({ data }) => (this.allTracks = data));
+
         this.webSocket = new WebSocket(MusicBeeAPI.ENDPOINT);
         this.webSocket.addEventListener("open", this.runHandshake);
         this.webSocket.addEventListener("message", this.onMessage);
@@ -71,15 +88,26 @@ export class MusicBeeAPI {
     removeEventListener(message: string, listener: EventListener) {
         if (!this.eventListeners[message]) return;
 
-        this.eventListeners[message] = this.eventListeners[message].filter((x) => x != listener);
+        this.eventListeners[message] = this.eventListeners[message].filter(x => x !== listener);
     }
 
     seek = (seekTo: number) => this.sendMessage("nowplayingposition", seekTo);
     setVolume = (volume: number) => this.sendMessage("playervolume", volume);
 
     browseAlbums = () => {
-        // TODO: set the limit smarter
-        this.sendMessage("browsealbums", { offset: 0, limit: 800 });
+        this.sendMessage("browsealbums");
+    };
+
+    browseArtists = () => {
+        this.sendMessage("browseartists");
+    };
+
+    browseTracks = () => {
+        this.sendMessage("browsetracks");
+    };
+
+    browseGenres = () => {
+        this.sendMessage("browsegenres");
     };
 
     playPause = () => {
@@ -92,6 +120,16 @@ export class MusicBeeAPI {
 
     skipNext = () => {
         this.sendMessage("playernext");
+    };
+
+    queueTracks = (tracks: Track[], queueType: QueueType) => {
+        const data = { data: tracks.map(track => track.src), queue: queueType, play: null };
+        console.log(data);
+        this.sendMessage("nowplayingqueue", data);
+    };
+
+    playTrackNow = (track: Track) => {
+        this.queueTracks([track], "now");
     };
 }
 
