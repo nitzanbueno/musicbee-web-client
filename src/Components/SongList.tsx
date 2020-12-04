@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { ListItem, ListItemIcon, IconButton, ListItemText, makeStyles } from "@material-ui/core";
 import { Pause, PlayArrow } from "@material-ui/icons";
-import { MusicBeeInfoContext } from "./MusicBeeInfo";
+import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 import VirtualList from "./VirtualList";
 
 const useStyles = makeStyles(() => ({

@@ -1,9 +1,9 @@
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
 import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext } from "@material-ui/icons";
 import React, { useContext, useEffect, useReducer, useState } from "react";
-import { MusicBeeInfoContext } from "./MusicBeeInfo";
-import { MusicBeeAPIContext } from "./MusicBeeAPI";
-import { millisecondsToTime, useObjectReducer } from "./Utils";
+import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
+import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
+import { millisecondsToTime, useObjectReducer } from "../Logic/Utils";
 import OverflowScroller from "./OverflowScroller";
 
 const useStyles = makeStyles(theme => ({

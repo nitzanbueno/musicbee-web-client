@@ -1,8 +1,8 @@
 import { IconButton, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
 import { PlaylistPlay } from "@material-ui/icons";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { MusicBeeAPIContext } from "./MusicBeeAPI";
-import VirtualList from "./VirtualList";
+import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
+import VirtualList from "../Components/VirtualList";
 
 const PLAYLIST_ITEM_HEIGHT = 60;
 

@@ -57,7 +57,7 @@ export class MusicBeeAPI {
                 listener(data);
             }
         } else {
-        console.log("Message:", parsedMessageData);
+            console.log("Message:", parsedMessageData);
         }
     };
 

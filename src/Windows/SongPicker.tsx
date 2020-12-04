@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useReducer } from "react";
 import { makeStyles } from "@material-ui/core";
-import { MusicBeeAPIContext, Track } from "./MusicBeeAPI";
-import SongList from "./SongList";
+import { MusicBeeAPIContext, Track } from "../Logic/MusicBeeAPI";
+import SongList from "../Components/SongList";
 
 const TRACK_FIELDS_TO_SEARCH = ["album", "album_artist", "artist", "title"];
 
