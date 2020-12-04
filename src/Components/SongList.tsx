@@ -1,5 +1,12 @@
-import React, { useContext } from "react";
-import { ListItem, ListItemIcon, IconButton, ListItemText, makeStyles } from "@material-ui/core";
+import React, { ReactNode, useContext } from "react";
+import {
+    ListItem,
+    ListItemIcon,
+    IconButton,
+    ListItemText,
+    makeStyles,
+    ListItemSecondaryAction,
+} from "@material-ui/core";
 import { Pause, PlayArrow } from "@material-ui/icons";
 import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 import VirtualList from "./VirtualList";
@@ -20,16 +27,22 @@ const SongListItem: React.FC<{
     paused?: boolean;
     style: any;
     classes: any;
+    renderSecondaryAction?: () => ReactNode;
 }> = props => {
     const { paused = true } = props;
 
     return (
-        <ListItem style={{ height: props.itemHeight, ...props.style }}>
-            <ListItemIcon>
-                <IconButton onClick={props.onPlay}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
-            </ListItemIcon>
-            <ListItemText primary={props.title} secondary={props.artist} className={props.classes.truncate} />
-        </ListItem>
+        <div style={{ ...props.style, height: props.itemHeight }}>
+            <ListItem>
+                <ListItemIcon>
+                    <IconButton onClick={props.onPlay}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
+                </ListItemIcon>
+                <ListItemText primary={props.title} secondary={props.artist} className={props.classes.truncate} />
+                {props.renderSecondaryAction ? (
+                    <ListItemSecondaryAction children={props.renderSecondaryAction()} />
+                ) : null}
+            </ListItem>
+        </div>
     );
 };
 
@@ -42,10 +55,11 @@ interface SongListProps {
     onTogglePlayPause: () => void;
     flex?: boolean;
     songHeight?: number;
+    renderSecondaryAction?: (index: number) => ReactNode;
 }
 
 const SongList: React.FC<SongListProps> = props => {
-    const { songHeight = 40, titleKey, artistKey, pathKey } = props;
+    const { songHeight = 40, titleKey, artistKey, pathKey, renderSecondaryAction } = props;
     const { nowPlayingTrack, playerStatus } = useContext(MusicBeeInfoContext);
     const classes = useStyles();
 
@@ -71,6 +85,7 @@ const SongList: React.FC<SongListProps> = props => {
                 style={style}
                 itemHeight={songHeight}
                 classes={classes}
+                renderSecondaryAction={renderSecondaryAction && (() => renderSecondaryAction(index))}
             />
         );
     }

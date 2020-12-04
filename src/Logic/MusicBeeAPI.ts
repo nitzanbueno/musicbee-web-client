@@ -107,13 +107,13 @@ export class MusicBeeAPI {
         this.sendMessage("playernext");
     };
 
-    queueTracks = (tracks: Track[], queueType: QueueType) => {
+    queueTracks = (queueType: QueueType, ...tracks: Track[]) => {
         const data = { data: tracks.map(track => track.src), queue: queueType, play: null };
         this.sendMessage("nowplayingqueue", data);
     };
 
     playTrackNow = (track: Track) => {
-        this.queueTracks([track], "now");
+        this.queueTracks("now", track);
     };
 }
 

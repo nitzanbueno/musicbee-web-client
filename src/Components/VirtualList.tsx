@@ -7,6 +7,7 @@ interface Props {
     rowHeight: number;
     rowCount: number;
     rowRenderer: (data: { index: number; key: string | number; style: any }) => ReactNode;
+    className?: string;
 }
 
 const VirtualList: React.FC<Props> = props => {
