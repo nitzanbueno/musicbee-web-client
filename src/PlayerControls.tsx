@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import { MusicBeeInfoContext } from "./MusicBeeInfo";
 import { MusicBeeAPIContext } from "./MusicBeeAPI";
 import { millisecondsToTime, useObjectReducer } from "./Utils";
+import OverflowScroller from "./OverflowScroller/OverflowScroller";
 
 const useStyles = makeStyles(theme => ({
     bar: {
@@ -12,7 +13,7 @@ const useStyles = makeStyles(theme => ({
         height: "100%",
         padding: "0 20px",
         display: "flex",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: theme.palette.grey[800],
         color: theme.palette.grey[300],
@@ -41,6 +42,9 @@ const useStyles = makeStyles(theme => ({
     metadata: {
         display: "flex",
         flexDirection: "column",
+        width: 200,
+        overflow: "hidden",
+        position: "relative",
     },
     controlButtonGroup: {
         display: "flex",
@@ -85,10 +89,13 @@ const PlayerControls: React.FC<{}> = () => {
             <div className={classes.metadata}>
                 {nowPlayingTrack ? (
                     <>
-                        <b>{nowPlayingTrack.title}</b>
+                        <OverflowScroller>
+                            <b>{nowPlayingTrack.title}</b>
+                        </OverflowScroller>
                         <span>{nowPlayingTrack.artist}</span>
                         <span>
-                            {nowPlayingTrack.album} {nowPlayingTrack.year ? `(${nowPlayingTrack.year})` : ""}
+                            <i>{nowPlayingTrack.album}</i>
+                            {nowPlayingTrack.year ? ` (${nowPlayingTrack.year})` : ""}
                         </span>
                     </>
                 ) : (
