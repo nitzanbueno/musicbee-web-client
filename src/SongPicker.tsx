@@ -30,7 +30,11 @@ const SongPicker: React.FC<{}> = () => {
             songHeight={60}
             className={classes.songPicker}
             songs={API.allTracks}
-            onPlay={index => API.playTrackNow((API.allTracks as Track[])[index])}
+            artistKey="artist"
+            titleKey="title"
+            pathKey="src"
+            onSet={index => API.playTrackNow((API.allTracks as Track[])[index])}
+            onTogglePlayPause={API.playPause}
         />
     ) : null;
 };

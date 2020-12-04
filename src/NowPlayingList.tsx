@@ -55,8 +55,12 @@ const NowPlayingList: React.FC<{}> = () => {
             <SongList
                 songHeight={60}
                 className={classes.songList}
-                songs={nowPlayingSongs.map(song => ({ artist: song.Artist, title: song.Title }))}
-                onPlay={index => API.sendMessage("nowplayinglistplay", nowPlayingSongs[index].Position)}
+                songs={nowPlayingSongs}
+                pathKey="Path"
+                titleKey="Title"
+                artistKey="Artist"
+                onSet={index => API.sendMessage("nowplayinglistplay", nowPlayingSongs[index].Position)}
+                onTogglePlayPause={API.playPause}
             />
         </div>
     );

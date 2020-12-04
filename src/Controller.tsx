@@ -4,8 +4,9 @@ import MainWindow from "./MainWindow";
 import { MusicBeeAPI, MusicBeeAPIContext } from "./MusicBeeAPI";
 import NowPlayingList from "./NowPlayingList";
 import PlayerControls from "./PlayerControls";
+import { MusicBeeInfoProvider } from "./MusicBeeInfo";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
     container: {
         width: "100vw",
         height: "100vh",
@@ -32,11 +33,11 @@ const Controller: React.FC<{}> = () => {
         <MusicBeeAPIContext.Provider value={API}>
             <div className={classes.container}>
                 {loaded ? (
-                    <>
+                    <MusicBeeInfoProvider>
                         <NowPlayingList />
                         <MainWindow />
                         <PlayerControls />
-                    </>
+                    </MusicBeeInfoProvider>
                 ) : (
                     "Loading..."
                 )}
