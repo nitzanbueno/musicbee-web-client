@@ -1,9 +1,8 @@
-import React, { useContext, useEffect } from "react";
-import { List as VirtualList } from "react-virtualized";
+import React, { useContext } from "react";
 import { ListItem, ListItemIcon, IconButton, ListItemText } from "@material-ui/core";
 import { Pause, PlayArrow } from "@material-ui/icons";
-import SizeCalculator from "./SizeCalculator";
 import { MusicBeeInfoContext } from "./MusicBeeInfo";
+import VirtualList from "./VirtualList";
 
 const SongListItem: React.FC<{
     title: string;
@@ -66,20 +65,12 @@ const SongList: React.FC<SongListProps> = props => {
     }
 
     return (
-        <SizeCalculator className={props.className}>
-            {({ width, height }) => {
-                console.log("wtf", width, height);
-                return (
-                    <VirtualList
-                        rowHeight={songHeight}
-                        width={width}
-                        height={height}
-                        rowCount={props.songs.length}
-                        rowRenderer={renderRow}
-                    />
-                );
-            }}
-        </SizeCalculator>
+        <VirtualList
+            containerClassName={props.className}
+            rowHeight={songHeight}
+            rowCount={props.songs.length}
+            rowRenderer={renderRow}
+        />
     );
 };
 
