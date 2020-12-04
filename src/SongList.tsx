@@ -1,8 +1,16 @@
 import React, { useContext } from "react";
-import { ListItem, ListItemIcon, IconButton, ListItemText } from "@material-ui/core";
+import { ListItem, ListItemIcon, IconButton, ListItemText, makeStyles } from "@material-ui/core";
 import { Pause, PlayArrow } from "@material-ui/icons";
 import { MusicBeeInfoContext } from "./MusicBeeInfo";
 import VirtualList from "./VirtualList";
+
+const useStyles = makeStyles(() => ({
+    truncate: {
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+    },
+}));
 
 const SongListItem: React.FC<{
     title: string;
@@ -11,6 +19,7 @@ const SongListItem: React.FC<{
     onPlay: () => void;
     paused?: boolean;
     style: any;
+    classes: any;
 }> = props => {
     const { paused = true } = props;
 
@@ -19,7 +28,7 @@ const SongListItem: React.FC<{
             <ListItemIcon>
                 <IconButton onClick={props.onPlay}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
             </ListItemIcon>
-            <ListItemText primary={props.title} secondary={props.artist} />
+            <ListItemText primary={props.title} secondary={props.artist} className={props.classes.truncate} />
         </ListItem>
     );
 };
@@ -38,6 +47,7 @@ interface SongListProps {
 const SongList: React.FC<SongListProps> = props => {
     const { songHeight = 40, titleKey, artistKey, pathKey } = props;
     const { nowPlayingTrack, playerStatus } = useContext(MusicBeeInfoContext);
+    const classes = useStyles();
 
     function renderRow({ index, key, style }: { index: number; key: any; style: any }) {
         const song = props.songs[index];
@@ -60,6 +70,7 @@ const SongList: React.FC<SongListProps> = props => {
                 key={key}
                 style={style}
                 itemHeight={songHeight}
+                classes={classes}
             />
         );
     }
