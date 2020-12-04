@@ -2,8 +2,6 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 type Size = { width: number; height: number };
 
-let i = 0;
-
 const SizeCalculator: React.FC<
     React.HTMLAttributes<HTMLDivElement> & { children?: (size: Size) => ReactNode }
 > = props => {
@@ -16,7 +14,7 @@ const SizeCalculator: React.FC<
         // @ts-ignore
         const observer = new ResizeObserver(() => {
             const newSize = { width: observedElement.scrollWidth, height: observedElement.scrollHeight };
-            if (i++ < 10) setSize(newSize);
+            setSize(newSize);
         });
 
         observer.observe(observedElement);
