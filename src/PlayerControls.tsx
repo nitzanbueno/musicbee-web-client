@@ -3,7 +3,7 @@ import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext } from "@material-ui
 import React, { useContext, useEffect, useReducer, useState } from "react";
 import { MusicBeeAPIContext } from "./MusicBeeAPI";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
     bar: {
         gridColumn: "1 / -1",
         gridRow: "2 / 3",
@@ -69,13 +69,16 @@ function millisecondsToTime(millis: number) {
 type PartialSetStateAction<T> = Partial<T> | ((prev: T) => Partial<T>);
 
 function useObjectReducer<T>(initialState: T) {
-    return useReducer<React.Reducer<T, PartialSetStateAction<T>>>((prevState: T, newPartialState: PartialSetStateAction<T>) => {
-        if (typeof newPartialState === "function") {
-            return { ...prevState, ...newPartialState(prevState) };
-        } else {
-            return { ...prevState, ...newPartialState };
-        }
-    }, initialState);
+    return useReducer<React.Reducer<T, PartialSetStateAction<T>>>(
+        (prevState: T, newPartialState: PartialSetStateAction<T>) => {
+            if (typeof newPartialState === "function") {
+                return { ...prevState, ...newPartialState(prevState) };
+            } else {
+                return { ...prevState, ...newPartialState };
+            }
+        },
+        initialState
+    );
 }
 
 const PlayerControls: React.FC<{}> = () => {
@@ -92,8 +95,10 @@ const PlayerControls: React.FC<{}> = () => {
     });
     const API = useContext(MusicBeeAPIContext);
 
+    useEffect(() => console.log(nowPlayingTrack), [nowPlayingTrack]);
+
     useEffect(() => {
-        const playerStateCallback = (playerState) => setPlayerStatus({ playerState });
+        const playerStateCallback = playerState => setPlayerStatus({ playerState });
 
         const playerStatusCallback = ({ playerstate, playerrepeat, playershuffle, playermute, playervolume }) => {
             setPlayerStatus({
@@ -105,7 +110,7 @@ const PlayerControls: React.FC<{}> = () => {
             });
         };
 
-        const playerVolumeCallback = (playerVolume) => setPlayerStatus({ playerVolume });
+        const playerVolumeCallback = playerVolume => setPlayerStatus({ playerVolume });
 
         API.addEventListener("nowplayingposition", setServerTrackTime);
         API.addEventListener("nowplayingtrack", setNowPlayingTrack);
@@ -133,7 +138,7 @@ const PlayerControls: React.FC<{}> = () => {
         // (approximately - this gets reset every once in a while when the server synchronizes the time)
         const interval = setInterval(() => {
             if (playerStatus.playerState === "Playing") {
-                setTrackTime((prev) => ({ current: Math.min(prev.current + 1000, prev.total) }));
+                setTrackTime(prev => ({ current: Math.min(prev.current + 1000, prev.total) }));
             }
         }, 1000);
 
