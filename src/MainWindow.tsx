@@ -85,21 +85,26 @@ const SearchBar: React.FC<{
 const MainWindow: React.FC<{}> = () => {
     const classes = useStyles();
 
-    const [value, setValue] = useState(0);
+    const [tabIndex, setTabIndex] = useState(0);
     const [searchText, setSearchText] = useState("");
+
+    function switchTab(_: any, tab: number) {
+        setTabIndex(tab);
+        setSearchText("");
+    }
 
     return (
         <div className={classes.container}>
             <AppBar className={classes.appBar} position="static">
-                <Tabs value={value} onChange={(_, x) => setValue(x)} aria-label="simple tabs example">
+                <Tabs value={tabIndex} onChange={switchTab} aria-label="simple tabs example">
                     <Tab label="Songs" />
                     <Tab label="Playlists" />
                 </Tabs>
                 <SearchBar classes={classes} value={searchText} onChange={e => setSearchText(e.target.value)} />
             </AppBar>
 
-            {value === 0 && <SongPicker searchText={searchText} />}
-            {value === 1 && <Playlists searchText={searchText} />}
+            {tabIndex === 0 && <SongPicker searchText={searchText} />}
+            {tabIndex === 1 && <Playlists searchText={searchText} />}
         </div>
     );
 };
