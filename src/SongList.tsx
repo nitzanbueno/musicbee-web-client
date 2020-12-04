@@ -31,7 +31,7 @@ interface SongListProps {
     pathKey: string;
     onSet: (index: number) => void;
     onTogglePlayPause: () => void;
-    className?: string;
+    flex?: boolean;
     songHeight?: number;
 }
 
@@ -65,12 +65,7 @@ const SongList: React.FC<SongListProps> = props => {
     }
 
     return (
-        <VirtualList
-            containerClassName={props.className}
-            rowHeight={songHeight}
-            rowCount={props.songs.length}
-            rowRenderer={renderRow}
-        />
+        <VirtualList flex={props.flex} rowHeight={songHeight} rowCount={props.songs.length} rowRenderer={renderRow} />
     );
 };
 

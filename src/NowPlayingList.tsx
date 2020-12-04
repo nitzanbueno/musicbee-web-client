@@ -61,7 +61,7 @@ const NowPlayingList: React.FC<{}> = () => {
             </Typography>
             <SongList
                 songHeight={60}
-                className={classes.songList}
+                flex
                 songs={nowPlayingSongs}
                 pathKey="Path"
                 titleKey="Title"

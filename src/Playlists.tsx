@@ -49,7 +49,6 @@ const Playlists: React.FC<{ searchText?: string }> = props => {
         <VirtualList
             rowHeight={PLAYLIST_ITEM_HEIGHT}
             rowCount={filteredPlaylists.length}
-            containerClassName={classes.playlistList}
             rowRenderer={({ index, style }) => {
                 const playlist = filteredPlaylists[index];
 
