@@ -15,9 +15,15 @@ const useStyles = makeStyles(theme => ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
     },
     songList: {
         flexGrow: 1,
+        width: "100%",
+    },
+    title: {
+        marginBottom: 10,
+        marginTop: 10,
     },
 }));
 
@@ -50,8 +56,9 @@ const NowPlayingList: React.FC<{}> = () => {
 
     return (
         <div className={classes.container}>
-            <Typography variant="body1">Now Playing</Typography>
-            {/* <div style={{ backgroundColor: "aqua", height: 100 }} /> */}
+            <Typography variant="h4" className={classes.title}>
+                Now Playing
+            </Typography>
             <SongList
                 songHeight={60}
                 className={classes.songList}
