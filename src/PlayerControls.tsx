@@ -88,7 +88,7 @@ const PlayerControls: React.FC<{}> = () => {
                         <b>{nowPlayingTrack.title}</b>
                         <span>{nowPlayingTrack.artist}</span>
                         <span>
-                            {nowPlayingTrack.album} ({nowPlayingTrack.year})
+                            {nowPlayingTrack.album} {nowPlayingTrack.year ? `(${nowPlayingTrack.year})` : ""}
                         </span>
                     </>
                 ) : (
