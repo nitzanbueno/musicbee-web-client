@@ -100,7 +100,7 @@ const PlayerControls: React.FC<{}> = () => {
                     <SkipPrevious />
                 </IconButton>
                 <IconButton onClick={() => API.playPause()} className={classes.controlButton}>
-                    {playerStatus.playerState === "Paused" ? <PlayArrow /> : <Pause />}
+                    {playerStatus.playerState !== "Playing" ? <PlayArrow /> : <Pause />}
                 </IconButton>
                 <IconButton onClick={() => API.skipNext()} className={classes.controlButton}>
                     <SkipNext />

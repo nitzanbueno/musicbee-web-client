@@ -47,8 +47,7 @@ const SongListWrapper: React.FC<SongListProps> = props => {
 
         if (song[pathKey] === nowPlayingTrack?.path) {
             onPlay = props.onTogglePlayPause;
-            console.log(playerStatus.playerState);
-            paused = playerStatus.playerState === "Paused";
+            paused = playerStatus.playerState !== "Playing";
         } else {
             onPlay = () => props.onSet(index);
         }
