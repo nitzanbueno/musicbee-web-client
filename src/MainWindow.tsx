@@ -4,7 +4,7 @@ import { Search as SearchIcon } from "@material-ui/icons";
 import Playlists from "./Playlists";
 import SongPicker from "./SongPicker";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
     container: {
         gridColumn: "2 / 3",
         gridRow: "1 / 2",
@@ -88,7 +88,7 @@ const MainWindow: React.FC<{}> = () => {
     const classes = useStyles();
 
     const [value, setValue] = useState(0);
-    const [query, setQuery] = useState("");
+    const [searchText, setSearchText] = useState("");
 
     return (
         <div className={classes.container}>
@@ -97,10 +97,10 @@ const MainWindow: React.FC<{}> = () => {
                     <Tab label="Songs" />
                     <Tab label="Playlists" />
                 </Tabs>
-                <SearchBar classes={classes} value={query} onChange={(e) => setQuery(e.target.value)} />
+                <SearchBar classes={classes} value={searchText} onChange={e => setSearchText(e.target.value)} />
             </AppBar>
 
-            {value === 0 && <SongPicker />}
+            {value === 0 && <SongPicker searchText={searchText} />}
             {value === 1 && <Playlists />}
             {/* Custom: 
             <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />

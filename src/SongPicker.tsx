@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useMemo, useReducer } from "react";
 import { makeStyles } from "@material-ui/core";
 import { MusicBeeAPIContext, Track } from "./MusicBeeAPI";
 import { SongList } from "./SongList";
@@ -10,11 +10,24 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const SongPicker: React.FC<{}> = () => {
-    const API = useContext(MusicBeeAPIContext);
-    const forceUpdate = useReducer(x => !x, true)[1];
+const TRACK_FIELDS_TO_SEARCH = ["album", "album_artist", "artist", "title"];
+
+function doesTrackMatchQuery(track: Track, query?: string) {
+    if (!query) return true;
+
+    for (const fieldToSearch of TRACK_FIELDS_TO_SEARCH) {
+        if (track[fieldToSearch].toLowerCase().includes(query)) return true;
+    }
+
+    return false;
+}
+
+const SongPicker: React.FC<{ searchText?: string }> = props => {
     const classes = useStyles();
-    console.log(API.allTracks);
+
+    const forceUpdate = useReducer(x => !x, true)[1];
+
+    const API = useContext(MusicBeeAPIContext);
 
     useEffect(() => {
         // Reload on update
@@ -25,15 +38,20 @@ const SongPicker: React.FC<{}> = () => {
         }
     }, []);
 
-    return API.allTracks !== undefined ? (
+    const filteredTracks = useMemo(() => API.allTracks?.filter(track => doesTrackMatchQuery(track, props.searchText)), [
+        API.allTracks,
+        props.searchText,
+    ]);
+
+    return filteredTracks ? (
         <SongList
             songHeight={60}
             className={classes.songPicker}
-            songs={API.allTracks}
+            songs={filteredTracks}
             artistKey="artist"
             titleKey="title"
             pathKey="src"
-            onSet={index => API.playTrackNow((API.allTracks as Track[])[index])}
+            onSet={index => API.playTrackNow(filteredTracks[index])}
             onTogglePlayPause={API.playPause}
         />
     ) : null;
