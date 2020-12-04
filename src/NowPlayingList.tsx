@@ -1,9 +1,9 @@
-import { IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from "@material-ui/core";
-import { PlayArrow } from "@material-ui/icons";
+import { makeStyles, Typography } from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
 import { MusicBeeAPIContext } from "./MusicBeeAPI";
+import { SongList } from "./SongList";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
     container: {
         left: 0,
         width: 400,
@@ -13,7 +13,11 @@ const useStyles = makeStyles((theme) => ({
         gridColumnStart: 1,
         gridColumnEnd: 2,
         height: "100%",
-        overflowY: "scroll",
+        display: "flex",
+        flexDirection: "column",
+    },
+    songList: {
+        flexGrow: 1,
     },
 }));
 
@@ -30,7 +34,6 @@ const NowPlayingList: React.FC<{}> = () => {
     const classes = useStyles();
 
     function handleNowPlayingList(data: NowPlayingSong[]) {
-        console.log(data);
         setNowPlayingSongs(data);
     }
 
@@ -48,18 +51,13 @@ const NowPlayingList: React.FC<{}> = () => {
     return (
         <div className={classes.container}>
             <Typography variant="body1">Now Playing</Typography>
-            <List>
-                {nowPlayingSongs.map(({ Title, Position, Artist }) => (
-                    <ListItem key={Position}>
-                        <ListItemIcon>
-                            <IconButton onClick={() => API.sendMessage("nowplayinglistplay", Position)}>
-                                <PlayArrow />
-                            </IconButton>
-                        </ListItemIcon>
-                        <ListItemText primary={`${Title}`} secondary={Artist} />
-                    </ListItem>
-                ))}
-            </List>
+            {/* <div style={{ backgroundColor: "aqua", height: 100 }} /> */}
+            <SongList
+                songHeight={60}
+                className={classes.songList}
+                songs={nowPlayingSongs.map(song => ({ artist: song.Artist, title: song.Title }))}
+                onPlay={index => API.sendMessage("nowplayinglistplay", nowPlayingSongs[index].Position)}
+            />
         </div>
     );
 };
