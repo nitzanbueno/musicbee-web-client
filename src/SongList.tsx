@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { List as VirtualList } from "react-virtualized";
 import { ListItem, ListItemIcon, IconButton, ListItemText } from "@material-ui/core";
 import { Pause, PlayArrow } from "@material-ui/icons";
@@ -36,7 +36,7 @@ interface SongListProps {
     songHeight?: number;
 }
 
-const SongListWrapper: React.FC<SongListProps> = props => {
+const SongList: React.FC<SongListProps> = props => {
     const { songHeight = 40, titleKey, artistKey, pathKey } = props;
     const { nowPlayingTrack, playerStatus } = useContext(MusicBeeInfoContext);
 
@@ -67,17 +67,20 @@ const SongListWrapper: React.FC<SongListProps> = props => {
 
     return (
         <SizeCalculator className={props.className}>
-            {({ width, height }) => (
-                <VirtualList
-                    rowHeight={songHeight}
-                    width={width}
-                    height={height}
-                    rowCount={props.songs.length}
-                    rowRenderer={renderRow}
-                />
-            )}
+            {({ width, height }) => {
+                console.log("wtf", width, height);
+                return (
+                    <VirtualList
+                        rowHeight={songHeight}
+                        width={width}
+                        height={height}
+                        rowCount={props.songs.length}
+                        rowRenderer={renderRow}
+                    />
+                );
+            }}
         </SizeCalculator>
     );
 };
 
-export { SongListWrapper as SongList };
+export default SongList;

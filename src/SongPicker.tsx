@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useReducer } from "react";
 import { makeStyles } from "@material-ui/core";
 import { MusicBeeAPIContext, Track } from "./MusicBeeAPI";
-import { SongList } from "./SongList";
+import SongList from "./SongList";
 
 const useStyles = makeStyles(theme => ({
     songPicker: {
@@ -36,7 +36,7 @@ const SongPicker: React.FC<{ searchText?: string }> = props => {
         if (!API.allTracks) {
             API.browseTracks();
         }
-    }, []);
+    }, [API]);
 
     const filteredTracks = useMemo(() => API.allTracks?.filter(track => doesTrackMatchQuery(track, props.searchText)), [
         API.allTracks,

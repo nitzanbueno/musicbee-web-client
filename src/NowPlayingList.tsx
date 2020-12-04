@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
 import { MusicBeeAPIContext } from "./MusicBeeAPI";
-import { SongList } from "./SongList";
+import SongList from "./SongList";
 
 const useStyles = makeStyles(theme => ({
     container: {
