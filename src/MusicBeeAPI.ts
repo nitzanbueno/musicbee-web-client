@@ -95,6 +95,10 @@ export class MusicBeeAPI {
         this.sendMessage("playerplaypause");
     };
 
+    playPlaylist = (url: string) => {
+        this.sendMessage("playlistplay", url);
+    };
+
     skipPrevious = () => {
         this.sendMessage("playerprevious");
     };

@@ -1,4 +1,4 @@
-import { ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
+import { IconButton, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
 import { PlaylistPlay } from "@material-ui/icons";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { MusicBeeAPIContext } from "./MusicBeeAPI";
@@ -54,13 +54,15 @@ const Playlists: React.FC<{ searchText?: string }> = props => {
 
                 return (
                     <ListItem
-                        onDoubleClick={() => API.sendMessage("playlistplay", playlist.url)}
+                        onDoubleClick={() => API.playPlaylist(playlist.url)}
                         key={index}
                         className={classes.playlistItem}
                         style={style}
                     >
                         <ListItemIcon>
-                            <PlaylistPlay />
+                            <IconButton onClick={() => API.playPlaylist(playlist.url)}>
+                                <PlaylistPlay />
+                            </IconButton>
                         </ListItemIcon>
                         <ListItemText primary={playlist.name} />
                     </ListItem>
