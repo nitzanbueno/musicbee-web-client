@@ -17,6 +17,9 @@ const useStyles = makeStyles(() => ({
         overflow: "hidden",
         textOverflow: "ellipsis",
     },
+    songList: {
+        listStyleType: "none", // For some reason the bullet points show on Chrome...
+    },
 }));
 
 const SongListItem: React.FC<{
@@ -91,7 +94,13 @@ const SongList: React.FC<SongListProps> = props => {
     }
 
     return (
-        <VirtualList flex={props.flex} rowHeight={songHeight} rowCount={props.songs.length} rowRenderer={renderRow} />
+        <VirtualList
+            className={classes.songList}
+            flex={props.flex}
+            rowHeight={songHeight}
+            rowCount={props.songs.length}
+            rowRenderer={renderRow}
+        />
     );
 };
 
