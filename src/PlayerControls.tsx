@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import { MusicBeeInfoContext } from "./MusicBeeInfo";
 import { MusicBeeAPIContext } from "./MusicBeeAPI";
 import { millisecondsToTime, useObjectReducer } from "./Utils";
-import OverflowScroller from "./OverflowScroller/OverflowScroller";
+import OverflowScroller from "./OverflowScroller";
 
 const useStyles = makeStyles(theme => ({
     bar: {
