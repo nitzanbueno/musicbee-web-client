@@ -83,8 +83,6 @@ const SearchBar: React.FC<{
 );
 
 const MainWindow: React.FC<{}> = () => {
-    // const [customContext, setCustomContext] = useState("");
-    // const [customData, setCustomData] = useState("");
     const classes = useStyles();
 
     const [value, setValue] = useState(0);
@@ -101,11 +99,7 @@ const MainWindow: React.FC<{}> = () => {
             </AppBar>
 
             {value === 0 && <SongPicker searchText={searchText} />}
-            {value === 1 && <Playlists />}
-            {/* Custom: 
-            <input onChange={(e) => setCustomContext(e.target.value)} value={customContext} />
-            <input onChange={(e) => setCustomData(e.target.value)} value={customData} />
-            <button onClick={() => API.sendMessage(customContext, JSON.parse(customData))}>Send</button> */}
+            {value === 1 && <Playlists searchText={searchText} />}
         </div>
     );
 };
