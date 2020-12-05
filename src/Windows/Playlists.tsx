@@ -34,9 +34,13 @@ const Playlists: React.FC<{ searchText?: string }> = props => {
 
     const classes = useStyles();
 
+    function handlePlaylists({ data }) {
+        setPlaylists(data);
+    }
+
     useEffect(() => {
-        API.addEventListener("playlistlist", setPlaylists);
-        API.sendMessage("playlistlist");
+        API.addEventListener("playlistlist", handlePlaylists);
+        API.sendMessage("playlistlist", { offset: 0, limit: 1000 });
         return () => API.removeEventListener("playlistlist", setPlaylists);
     }, [API, setPlaylists]);
 

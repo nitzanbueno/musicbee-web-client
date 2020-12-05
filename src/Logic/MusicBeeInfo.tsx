@@ -14,7 +14,7 @@ export interface PlayerStatus {
     playerMute: boolean;
     playerRepeat: string;
     playerShuffle: boolean;
-    playerState: "Playing" | "Paused" | "Stopped" | "";
+    playerState: "playing" | "paused" | "stopped" | "";
     playerVolume: string;
 }
 

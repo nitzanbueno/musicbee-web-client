@@ -73,7 +73,7 @@ const SongList: React.FC<SongListProps> = props => {
 
         if (song[pathKey] === nowPlayingTrack?.path) {
             onPlay = props.onTogglePlayPause;
-            paused = playerStatus.playerState !== "Playing";
+            paused = playerStatus.playerState !== "playing";
         } else {
             onPlay = () => props.onSet(index);
         }

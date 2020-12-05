@@ -1,6 +1,6 @@
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
 import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext } from "@material-ui/icons";
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
 import { millisecondsToTime, useObjectReducer } from "../Logic/Utils";
@@ -76,7 +76,7 @@ const PlayerControls: React.FC<{}> = () => {
         // Set the track time to change every second
         // (approximately - this gets reset every once in a while when the server synchronizes the time)
         const interval = setInterval(() => {
-            if (playerStatus.playerState === "Playing") {
+            if (playerStatus.playerState === "playing") {
                 setLocalTrackTime(prev => ({ current: Math.min(prev.current + 1000, prev.total) }));
             }
         }, 1000);
@@ -107,7 +107,7 @@ const PlayerControls: React.FC<{}> = () => {
                     <SkipPrevious />
                 </IconButton>
                 <IconButton onClick={() => API.playPause()} className={classes.controlButton}>
-                    {playerStatus.playerState !== "Playing" ? <PlayArrow /> : <Pause />}
+                    {playerStatus.playerState !== "playing" ? <PlayArrow /> : <Pause />}
                 </IconButton>
                 <IconButton onClick={() => API.skipNext()} className={classes.controlButton}>
                     <SkipNext />
