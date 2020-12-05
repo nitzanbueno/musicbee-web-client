@@ -30,10 +30,15 @@ export class MusicBeeAPI {
         // "browsetracks" data is relatively big, so it should be kept on API level
         this.addEventListener("browsetracks", ({ data }) => (this.allTracks = data));
 
-        this.webSocket = new WebSocket(address);
-        this.webSocket.addEventListener("open", () => this.runHandshake(() => onLoad(address)));
-        this.webSocket.addEventListener("message", this.onMessage);
-        this.webSocket.addEventListener("error", onError);
+        const webSocket = new WebSocket(address);
+        webSocket.addEventListener("error", onError);
+        webSocket.addEventListener("open", () => {
+            webSocket.removeEventListener("error", onError);
+            this.runHandshake(() => onLoad(address));
+        });
+        webSocket.addEventListener("message", this.onMessage);
+
+        this.webSocket = webSocket;
     }
 
     sendMessage = (context: string, data: any = "") => this.webSocket?.send(JSON.stringify({ context, data }));
