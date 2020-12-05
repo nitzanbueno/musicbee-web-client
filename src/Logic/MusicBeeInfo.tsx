@@ -13,7 +13,7 @@ export interface NowPlayingTrack {
 export interface PlayerStatus {
     playerMute: boolean;
     playerRepeat: string;
-    playerShuffle: boolean;
+    playerShuffle: string;
     playerState: "playing" | "paused" | "stopped" | "";
     playerVolume: string;
 }
@@ -30,7 +30,7 @@ const defaultContext: MusicBeeInfo = {
     playerStatus: {
         playerMute: false,
         playerRepeat: "",
-        playerShuffle: false,
+        playerShuffle: "off",
         playerState: "",
         playerVolume: "",
     },
@@ -67,12 +67,14 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
     useEffect(function wireUpCallbacks() {
         const playerStateCallback = (playerState: MusicBeeInfo["playerStatus"]["playerState"]) => setPlayerStatus({ playerState });
         const playerVolumeCallback = (playerVolume: string) => setPlayerStatus({ playerVolume });
+        const playerShuffleCallback = (playerShuffle: string) => setPlayerStatus({ playerShuffle });
 
         API.addEventListener("nowplayingposition", setTrackTime);
         API.addEventListener("nowplayingtrack", setNowPlayingTrack);
         API.addEventListener("playerstate", playerStateCallback);
         API.addEventListener("playervolume", playerVolumeCallback);
         API.addEventListener("playerstatus", setPlayerStatusFromApiData);
+        API.addEventListener("playershuffle", playerShuffleCallback);
 
         return () => {
             API.removeEventListener("nowplayingposition", setTrackTime);
@@ -80,6 +82,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
             API.removeEventListener("playerstate", playerStateCallback);
             API.removeEventListener("playervolume", playerVolumeCallback);
             API.removeEventListener("playerstatus", setPlayerStatusFromApiData);
+            API.removeEventListener("playershuffle", playerShuffleCallback);
         };
     }, [API, setTrackTime, setPlayerStatus, setNowPlayingTrack]);
 

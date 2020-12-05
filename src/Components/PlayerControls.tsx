@@ -1,5 +1,5 @@
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
-import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext } from "@material-ui/icons";
+import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext, Shuffle, Headset } from "@material-ui/icons";
 import React, { useContext, useEffect, useState } from "react";
 import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
@@ -53,13 +53,23 @@ const useStyles = makeStyles(theme => ({
     controlButton: {
         color: theme.palette.primary.light,
     },
+    onButton: {
+        color: theme.palette.secondary.light,
+    },
+    offButton: {
+        color: theme.palette.common.white,
+    },
 }));
 
 const PlayerControls: React.FC<{}> = () => {
     const classes = useStyles();
 
     const API = useContext(MusicBeeAPIContext);
-    const { nowPlayingTrack, playerStatus, trackTime: serverTrackTime } = useContext(MusicBeeInfoContext);
+    const {
+        nowPlayingTrack,
+        playerStatus: { playerShuffle, playerVolume, playerState },
+        trackTime: serverTrackTime,
+    } = useContext(MusicBeeInfoContext);
 
     const [localTrackTime, setLocalTrackTime] = useObjectReducer({ current: 0, total: 0 });
     const [localVolume, setLocalVolume] = useState(0);
@@ -67,20 +77,20 @@ const PlayerControls: React.FC<{}> = () => {
     // Synchronize the local track time/volume whenever the host sends new info
     // (This is so the user can seek smoothly without sending new API calls every millisecond)
     useEffect(() => setLocalTrackTime({ ...serverTrackTime }), [serverTrackTime, setLocalTrackTime]);
-    useEffect(() => setLocalVolume(parseInt(playerStatus.playerVolume)), [playerStatus.playerVolume, setLocalVolume]);
+    useEffect(() => setLocalVolume(parseInt(playerVolume)), [playerVolume, setLocalVolume]);
 
     // Advance the seek bar every second
     useEffect(() => {
         // Set the track time to change every second
         // (approximately - this gets reset every once in a while when the server synchronizes the time)
         const interval = setInterval(() => {
-            if (playerStatus.playerState === "playing") {
+            if (playerState === "playing") {
                 setLocalTrackTime(prev => ({ current: Math.min(prev.current + 1000, prev.total) }));
             }
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [setLocalTrackTime, playerStatus.playerState]);
+    }, [setLocalTrackTime, playerState]);
 
     return (
         <div className={classes.bar}>
@@ -105,7 +115,7 @@ const PlayerControls: React.FC<{}> = () => {
                     <SkipPrevious />
                 </IconButton>
                 <IconButton onClick={() => API.playPause()} className={classes.controlButton}>
-                    {playerStatus.playerState !== "playing" ? <PlayArrow /> : <Pause />}
+                    {playerState !== "playing" ? <PlayArrow /> : <Pause />}
                 </IconButton>
                 <IconButton onClick={() => API.skipNext()} className={classes.controlButton}>
                     <SkipNext />
@@ -123,6 +133,14 @@ const PlayerControls: React.FC<{}> = () => {
                 {millisecondsToTime(localTrackTime.total)}
             </div>
             <div className={classes.volumeContainer}>
+                <IconButton
+                    className={playerShuffle === "off" ? classes.offButton : classes.onButton}
+                    onClick={() => API.toggleShuffle()}
+                >
+                    {playerShuffle === "autodj" ? <Headset /> : <Shuffle />}
+                </IconButton>
+            </div>
+            <div className={classes.volumeContainer}>
                 <VolumeUp />
                 <Slider
                     className={classes.volumeSlider}
@@ -131,7 +149,7 @@ const PlayerControls: React.FC<{}> = () => {
                     onChange={(_, value) => setLocalVolume(value as number)}
                     onChangeCommitted={(_, value) => API.setVolume(value as number)}
                 />
-                {playerStatus.playerVolume}
+                {playerVolume}
             </div>
         </div>
     );
