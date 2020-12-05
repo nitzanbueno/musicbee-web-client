@@ -10,7 +10,7 @@ function doesTrackMatchQuery(track: Track, query?: string) {
     if (!query) return true;
 
     for (const fieldToSearch of TRACK_FIELDS_TO_SEARCH) {
-        if (track[fieldToSearch].toLocaleLowerCase().includes(query.toLocaleLowerCase())) return true;
+        if (track[fieldToSearch]?.toLocaleLowerCase()?.includes(query.toLocaleLowerCase())) return true;
     }
 
     return false;
