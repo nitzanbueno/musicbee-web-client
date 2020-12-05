@@ -64,8 +64,6 @@ const PlayerControls: React.FC<{}> = () => {
     const [localTrackTime, setLocalTrackTime] = useObjectReducer({ current: 0, total: 0 });
     const [localVolume, setLocalVolume] = useState(0);
 
-    useEffect(() => console.log(nowPlayingTrack), [nowPlayingTrack]);
-
     // Synchronize the local track time/volume whenever the host sends new info
     // (This is so the user can seek smoothly without sending new API calls every millisecond)
     useEffect(() => setLocalTrackTime({ ...serverTrackTime }), [serverTrackTime, setLocalTrackTime]);

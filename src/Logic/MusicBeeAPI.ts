@@ -16,8 +16,23 @@ export interface Track {
 }
 
 export class MusicBeeAPI {
-    webSocket?: WebSocket;
+    webSocket: WebSocket;
     allTracks?: Track[] = undefined;
+
+    constructor(public address: string, onLoad: () => void, onError: (e: Event) => void) {
+        this.webSocket = new WebSocket(address);
+
+        // "browsetracks" data is relatively big, so it should be kept on API level
+        this.addEventListener("browsetracks", ({ data }) => (this.allTracks = data));
+
+        this.webSocket = new WebSocket(address);
+        this.webSocket.addEventListener("error", onError);
+        this.webSocket.addEventListener("open", () => {
+            this.webSocket.removeEventListener("error", onError);
+            this.runHandshake(onLoad);
+        });
+        this.webSocket.addEventListener("message", this.onMessage);
+    }
 
     eventListeners: { [message: string]: EventListener[] } = {
         protocol: [],
@@ -26,22 +41,7 @@ export class MusicBeeAPI {
         ping: [() => this.sendMessage("pong", "")],
     };
 
-    tryConnect(address: string, onLoad: (address: string) => void, onError: (e: Event) => void) {
-        // "browsetracks" data is relatively big, so it should be kept on API level
-        this.addEventListener("browsetracks", ({ data }) => (this.allTracks = data));
-
-        const webSocket = new WebSocket(address);
-        webSocket.addEventListener("error", onError);
-        webSocket.addEventListener("open", () => {
-            webSocket.removeEventListener("error", onError);
-            this.runHandshake(() => onLoad(address));
-        });
-        webSocket.addEventListener("message", this.onMessage);
-
-        this.webSocket = webSocket;
-    }
-
-    sendMessage = (context: string, data: any = "") => this.webSocket?.send(JSON.stringify({ context, data }));
+    sendMessage = (context: string, data: any = "") => this.webSocket.send(JSON.stringify({ context, data }));
 
     runHandshake = (onLoad: () => void) => {
         this.sendMessage("player", "Web");
@@ -72,6 +72,16 @@ export class MusicBeeAPI {
         if (!this.eventListeners[message]) return;
 
         this.eventListeners[message] = this.eventListeners[message].filter(x => x !== listener);
+    }
+
+    addErrorListener(listener: (e: Event) => void) {
+        this.webSocket.addEventListener("error", listener);
+        this.webSocket.addEventListener("close", listener);
+    }
+
+    removeErrorListener(listener: (e: Event) => void) {
+        this.webSocket.removeEventListener("error", listener);
+        this.webSocket.removeEventListener("close", listener);
     }
 
     seek = (seekTo: number) => this.sendMessage("nowplayingposition", seekTo);
@@ -119,5 +129,5 @@ export class MusicBeeAPI {
     };
 }
 
-// I don't like setting a default value but I don't want to ts-ignore
-export const MusicBeeAPIContext = createContext<MusicBeeAPI>(new MusicBeeAPI());
+// @ts-ignore
+export const MusicBeeAPIContext = createContext<MusicBeeAPI>();
