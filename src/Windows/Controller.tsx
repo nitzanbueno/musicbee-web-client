@@ -1,48 +1,57 @@
 import { makeStyles } from "@material-ui/core";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import MainWindow from "./MainWindow";
 import { MusicBeeAPI, MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
 import NowPlayingList from "./NowPlayingList";
 import PlayerControls from "../Components/PlayerControls";
 import { MusicBeeInfoProvider } from "../Logic/MusicBeeInfo";
+import ConnectForm from "./ConnectForm";
 
 const useStyles = makeStyles(theme => ({
     container: {
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100%",
         display: "grid",
         flexDirection: "column",
         position: "absolute",
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary,
         gridTemplateColumns: "400px auto",
         gridTemplateRows: "auto 100px",
+    },
+    body: {
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
     },
 }));
 
 const Controller: React.FC<{}> = () => {
     const [loaded, setLoaded] = useState(false);
 
-    const { current: API } = useRef(new MusicBeeAPI(() => setLoaded(true)));
+    const { current: API } = useRef(new MusicBeeAPI());
 
-    useEffect(() => API.initialize(), [API]);
+    function handleLoad() {
+        setLoaded(true);
+    }
 
     const classes = useStyles();
 
     return (
-        <MusicBeeAPIContext.Provider value={API}>
-            <div className={classes.container}>
+        <div className={classes.body}>
+            <MusicBeeAPIContext.Provider value={API}>
                 {loaded ? (
                     <MusicBeeInfoProvider>
-                        <NowPlayingList />
-                        <MainWindow />
-                        <PlayerControls />
+                        <div className={classes.container}>
+                            <NowPlayingList />
+                            <MainWindow />
+                            <PlayerControls />
+                        </div>
                     </MusicBeeInfoProvider>
                 ) : (
-                    "Loading..."
+                    <ConnectForm onLoad={handleLoad} />
                 )}
-            </div>
-        </MusicBeeAPIContext.Provider>
+            </MusicBeeAPIContext.Provider>
+        </div>
     );
 };
 

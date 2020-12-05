@@ -16,8 +16,6 @@ export interface Track {
 }
 
 export class MusicBeeAPI {
-    static ENDPOINT: string = "ws://127.0.0.1:5000";
-
     webSocket?: WebSocket;
     allTracks?: Track[] = undefined;
 
@@ -28,22 +26,21 @@ export class MusicBeeAPI {
         ping: [() => this.sendMessage("pong", "")],
     };
 
-    constructor(private onLoad: () => void) {}
-
-    initialize() {
+    tryConnect(address: string, onLoad: (address: string) => void, onError: (e: Event) => void) {
         // "browsetracks" data is relatively big, so it should be kept on API level
         this.addEventListener("browsetracks", ({ data }) => (this.allTracks = data));
 
-        this.webSocket = new WebSocket(MusicBeeAPI.ENDPOINT);
-        this.webSocket.addEventListener("open", this.runHandshake);
+        this.webSocket = new WebSocket(address);
+        this.webSocket.addEventListener("open", () => this.runHandshake(() => onLoad(address)));
         this.webSocket.addEventListener("message", this.onMessage);
+        this.webSocket.addEventListener("error", onError);
     }
 
     sendMessage = (context: string, data: any = "") => this.webSocket?.send(JSON.stringify({ context, data }));
 
-    runHandshake = () => {
+    runHandshake = (onLoad: () => void) => {
         this.sendMessage("player", "Web");
-        this.addEventListener("protocol", this.onLoad);
+        this.addEventListener("protocol", onLoad);
         this.sendMessage("protocol", { no_broadcast: false, protocol_version: 5, client_id: "mb_web" });
     };
 
@@ -118,4 +115,4 @@ export class MusicBeeAPI {
 }
 
 // I don't like setting a default value but I don't want to ts-ignore
-export const MusicBeeAPIContext = createContext<MusicBeeAPI>(new MusicBeeAPI(() => {}));
+export const MusicBeeAPIContext = createContext<MusicBeeAPI>(new MusicBeeAPI());
