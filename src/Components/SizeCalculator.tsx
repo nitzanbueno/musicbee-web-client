@@ -15,7 +15,6 @@ const SizeCalculator: React.FC<{ flex?: boolean; children?: (size: Size) => Reac
         // @ts-ignore
         const observer = new ResizeObserver(() => {
             const newSize = { width: observedElement.scrollWidth, height: observedElement.scrollHeight };
-            console.log("Resize:", newSize);
             setSize(newSize);
         });
 

@@ -25,13 +25,10 @@ const SongMenu: React.FC<{
     const [anchorEl, setAnchorEl] = useState<any>(null);
 
     function handleClose() {
-        console.log("Closing");
-
         setAnchorEl(null);
     }
 
     function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-        console.log("Opening!", e);
         setAnchorEl(e.currentTarget);
     }
 

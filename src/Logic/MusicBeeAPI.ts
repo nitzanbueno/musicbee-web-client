@@ -58,7 +58,7 @@ export class MusicBeeAPI {
             for (const listener of this.eventListeners[context]) {
                 listener(data);
             }
-        } else {
+        } else if (process.env.NODE_ENV === "development") {
             console.log("Message:", parsedMessageData);
         }
     };
