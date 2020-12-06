@@ -115,6 +115,10 @@ export class MusicBeeAPI {
         this.sendMessage("playershuffle", "toggle");
     };
 
+    toggleRepeat = () => {
+        this.sendMessage("playerrepeat", "toggle");
+    };
+
     skipPrevious = () => {
         this.sendMessage("playerprevious");
     };

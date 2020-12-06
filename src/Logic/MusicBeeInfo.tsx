@@ -68,6 +68,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
         const playerStateCallback = (playerState: MusicBeeInfo["playerStatus"]["playerState"]) => setPlayerStatus({ playerState });
         const playerVolumeCallback = (playerVolume: string) => setPlayerStatus({ playerVolume });
         const playerShuffleCallback = (playerShuffle: string) => setPlayerStatus({ playerShuffle });
+        const playerRepeatCallback = (playerRepeat: string) => setPlayerStatus({ playerRepeat });
 
         API.addEventListener("nowplayingposition", setTrackTime);
         API.addEventListener("nowplayingtrack", setNowPlayingTrack);
@@ -75,6 +76,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
         API.addEventListener("playervolume", playerVolumeCallback);
         API.addEventListener("playerstatus", setPlayerStatusFromApiData);
         API.addEventListener("playershuffle", playerShuffleCallback);
+        API.addEventListener("playerrepeat", playerRepeatCallback);
 
         return () => {
             API.removeEventListener("nowplayingposition", setTrackTime);
@@ -83,6 +85,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
             API.removeEventListener("playervolume", playerVolumeCallback);
             API.removeEventListener("playerstatus", setPlayerStatusFromApiData);
             API.removeEventListener("playershuffle", playerShuffleCallback);
+            API.removeEventListener("playerrepeat", playerRepeatCallback);
         };
     }, [API, setTrackTime, setPlayerStatus, setNowPlayingTrack]);
 

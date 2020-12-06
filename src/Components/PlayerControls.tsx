@@ -1,5 +1,15 @@
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
-import { PlayArrow, Pause, VolumeUp, SkipPrevious, SkipNext, Shuffle, Headset } from "@material-ui/icons";
+import {
+    PlayArrow,
+    Pause,
+    VolumeUp,
+    SkipPrevious,
+    SkipNext,
+    Shuffle,
+    Headset,
+    Repeat,
+    RepeatOne,
+} from "@material-ui/icons";
 import React, { useContext, useEffect, useState } from "react";
 import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
@@ -19,7 +29,7 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.grey[300],
     },
     seek: {
-        margin: "0px 5px",
+        margin: "0px 10px",
         color: theme.palette.primary.light,
     },
     volumeSlider: {
@@ -28,16 +38,17 @@ const useStyles = makeStyles(theme => ({
         marginLeft: 10,
         color: theme.palette.primary.light,
     },
-    volumeContainer: {
+    buttonGroup: {
         display: "flex",
         alignItems: "center",
-        marginLeft: 30,
+        marginLeft: 20,
     },
     seekContainer: {
         display: "flex",
         alignItems: "center",
         width: "60%",
         justifyContent: "start",
+        marginLeft: 20,
     },
     metadata: {
         display: "flex",
@@ -52,6 +63,7 @@ const useStyles = makeStyles(theme => ({
     },
     controlButton: {
         color: theme.palette.primary.light,
+        margin: "0 -5px",
     },
     onButton: {
         color: theme.palette.secondary.light,
@@ -67,7 +79,7 @@ const PlayerControls: React.FC<{}> = () => {
     const API = useContext(MusicBeeAPIContext);
     const {
         nowPlayingTrack,
-        playerStatus: { playerShuffle, playerVolume, playerState },
+        playerStatus: { playerShuffle, playerVolume, playerState, playerRepeat },
         trackTime: serverTrackTime,
     } = useContext(MusicBeeInfoContext);
 
@@ -132,15 +144,21 @@ const PlayerControls: React.FC<{}> = () => {
                 />
                 {millisecondsToTime(localTrackTime.total)}
             </div>
-            <div className={classes.volumeContainer}>
+            <div className={classes.buttonGroup}>
                 <IconButton
                     className={playerShuffle === "off" ? classes.offButton : classes.onButton}
                     onClick={() => API.toggleShuffle()}
                 >
                     {playerShuffle === "autodj" ? <Headset /> : <Shuffle />}
                 </IconButton>
+                <IconButton
+                    className={playerRepeat === "none" ? classes.offButton : classes.onButton}
+                    onClick={() => API.toggleRepeat()}
+                >
+                    {playerRepeat === "one" ? <RepeatOne /> : <Repeat />}
+                </IconButton>
             </div>
-            <div className={classes.volumeContainer}>
+            <div className={classes.buttonGroup}>
                 <VolumeUp />
                 <Slider
                     className={classes.volumeSlider}
