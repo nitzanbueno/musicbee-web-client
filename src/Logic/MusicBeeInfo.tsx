@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { MusicBeeAPIContext } from "./MusicBeeAPI";
+import { MusicBeeAPIContext, Track } from "./MusicBeeAPI";
 import { useObjectReducer } from "./Utils";
 
 export interface NowPlayingTrack {
@@ -22,6 +22,7 @@ export interface MusicBeeInfo {
     nowPlayingTrack: NowPlayingTrack | null;
     trackTime: { current: number; total: number } | null;
     playerStatus: PlayerStatus;
+    allTracks: Track[];
 }
 
 const defaultContext: MusicBeeInfo = {
@@ -34,6 +35,7 @@ const defaultContext: MusicBeeInfo = {
         playerState: "",
         playerVolume: "",
     },
+    allTracks: [],
 };
 
 export const MusicBeeInfoContext = React.createContext<MusicBeeInfo>(defaultContext);
@@ -42,6 +44,9 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
     const [nowPlayingTrack, setNowPlayingTrack] = useState<NowPlayingTrack | null>(null);
     const [playerStatus, setPlayerStatus] = useObjectReducer(defaultContext.playerStatus);
     const [trackTime, setTrackTime] = useObjectReducer({ current: 0, total: 0 });
+
+    // "browsetracks" data is relatively big, so it should be kept on API level
+    const [allTracks, setAllTracks] = useState<Track[]>([]);
 
     const API = useContext(MusicBeeAPIContext);
 
@@ -69,6 +74,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
         const playerVolumeCallback = (playerVolume: string) => setPlayerStatus({ playerVolume });
         const playerShuffleCallback = (playerShuffle: string) => setPlayerStatus({ playerShuffle });
         const playerRepeatCallback = (playerRepeat: string) => setPlayerStatus({ playerRepeat });
+        const allTracksCallback = ({ data }: { data: Track[] }) => setAllTracks(data);
 
         API.addEventListener("nowplayingposition", setTrackTime);
         API.addEventListener("nowplayingtrack", setNowPlayingTrack);
@@ -77,6 +83,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
         API.addEventListener("playerstatus", setPlayerStatusFromApiData);
         API.addEventListener("playershuffle", playerShuffleCallback);
         API.addEventListener("playerrepeat", playerRepeatCallback);
+        API.addEventListener("browsetracks", allTracksCallback);
 
         return () => {
             API.removeEventListener("nowplayingposition", setTrackTime);
@@ -86,11 +93,12 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
             API.removeEventListener("playerstatus", setPlayerStatusFromApiData);
             API.removeEventListener("playershuffle", playerShuffleCallback);
             API.removeEventListener("playerrepeat", playerRepeatCallback);
+            API.removeEventListener("browsetracks", allTracksCallback);
         };
-    }, [API, setTrackTime, setPlayerStatus, setNowPlayingTrack]);
+    }, [API, setTrackTime, setPlayerStatus, setNowPlayingTrack, setAllTracks]);
 
     return (
-        <MusicBeeInfoContext.Provider value={{ nowPlayingTrack, trackTime, playerStatus }}>
+        <MusicBeeInfoContext.Provider value={{ nowPlayingTrack, trackTime, playerStatus, allTracks }}>
             {props.children}
         </MusicBeeInfoContext.Provider>
     );

@@ -17,14 +17,8 @@ export interface Track {
 
 export class MusicBeeAPI {
     webSocket: WebSocket;
-    allTracks?: Track[] = undefined;
 
     constructor(public address: string, onLoad: () => void, onError: (e: Event) => void) {
-        this.webSocket = new WebSocket(address);
-
-        // "browsetracks" data is relatively big, so it should be kept on API level
-        this.addEventListener("browsetracks", ({ data }) => (this.allTracks = data));
-
         this.webSocket = new WebSocket(address);
         this.webSocket.addEventListener("error", onError);
         this.webSocket.addEventListener("open", () => {

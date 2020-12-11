@@ -3,6 +3,7 @@ import { MusicBeeAPIContext, Track } from "../Logic/MusicBeeAPI";
 import SongList from "../Components/SongList";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import { MoreVert } from "@material-ui/icons";
+import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 
 const TRACK_FIELDS_TO_SEARCH = ["album", "album_artist", "artist", "title"];
 
@@ -56,19 +57,20 @@ const SongPicker: React.FC<{ searchText?: string }> = props => {
     const forceUpdate = useReducer(x => !x, true)[1];
 
     const API = useContext(MusicBeeAPIContext);
+    const { allTracks } = useContext(MusicBeeInfoContext);
 
     useEffect(() => {
         // Reload on update
         API.addEventListener("browsetracks", forceUpdate);
 
-        if (!API.allTracks) {
+        if (allTracks.length === 0) {
             API.browseTracks();
         }
-    }, [API]);
+    }, [API, allTracks, forceUpdate]);
 
     const filteredTracks = useMemo(
-        () => (API.allTracks ? API.allTracks.filter(track => doesTrackMatchQuery(track, props.searchText)) : []),
-        [API.allTracks, props.searchText]
+        () => (allTracks ? allTracks.filter(track => doesTrackMatchQuery(track, props.searchText)) : []),
+        [allTracks, props.searchText]
     );
 
     function renderSecondaryAction(index) {
