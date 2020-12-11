@@ -15,6 +15,13 @@ export interface Track {
     trackno: number;
 }
 
+export interface DataPage<T> {
+    offset: number;
+    limit: number;
+    data: T[];
+    total: number;
+}
+
 export class MusicBeeAPI {
     webSocket: WebSocket;
 
@@ -81,21 +88,57 @@ export class MusicBeeAPI {
     seek = (seekTo: number) => this.sendMessage("nowplayingposition", seekTo);
     setVolume = (volume: number) => this.sendMessage("playervolume", volume);
 
-    browseAlbums = () => {
-        this.sendMessage("browsealbums");
-    };
+    /**
+     * Sends a message and awaits a response from the server.
+     * Use only when the message is a command, and NOT when the message is an event handler (e.g. playerstate).
+     * @param context The context of the message.
+     * @param data The optional data.
+     * @param responseContext The desired context of the response message (default is the same one sent).
+     * @returns The resulting data of the response message.
+     */
+    sendMessageAndGetResponseAsync<T>(context: string, data?: any, responseContext: string = context): Promise<T> {
+        return new Promise(resolve => {
+            const listener = (result: T) => {
+                this.removeEventListener(responseContext, listener);
+                resolve(result);
+            };
 
-    browseArtists = () => {
-        this.sendMessage("browseartists");
-    };
+            this.addEventListener(responseContext, listener);
+            this.sendMessage(context, data);
+        });
+    }
 
-    browseTracks = () => {
-        this.sendMessage("browsetracks");
-    };
+    async browsePaginatedDataAsync<T>(message: string, pageSize: number = 5000): Promise<T[]> {
+        const result: T[] = [];
 
-    browseGenres = () => {
-        this.sendMessage("browsegenres");
-    };
+        let offset = 0;
+        let currentPage: DataPage<T>;
+
+        do {
+            currentPage = await this.sendMessageAndGetResponseAsync(message, { offset, limit: pageSize });
+
+            result.push(...currentPage.data);
+            offset += currentPage.limit;
+        } while (offset < currentPage.total);
+
+        return result;
+    }
+
+    browseAlbumsAsync() {
+        return this.browsePaginatedDataAsync("browsealbums");
+    }
+
+    browseArtistsAsync() {
+        return this.browsePaginatedDataAsync("browseartists");
+    }
+
+    browseTracksAsync(): Promise<Track[]> {
+        return this.browsePaginatedDataAsync("browsetracks");
+    }
+
+    browseGenresAsync() {
+        return this.browsePaginatedDataAsync("browsegenres");
+    }
 
     playPause = () => {
         this.sendMessage("playerplaypause");

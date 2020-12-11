@@ -66,6 +66,9 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
         API.sendMessage("init", "");
         API.sendMessage("playerstatus", "");
         API.sendMessage("nowplayingposition", true);
+
+        // Browse tracks then set the result
+        API.browseTracksAsync().then(setAllTracks);
     }, [API]);
 
     // prettier-ignore
@@ -74,7 +77,6 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
         const playerVolumeCallback = (playerVolume: string) => setPlayerStatus({ playerVolume });
         const playerShuffleCallback = (playerShuffle: string) => setPlayerStatus({ playerShuffle });
         const playerRepeatCallback = (playerRepeat: string) => setPlayerStatus({ playerRepeat });
-        const allTracksCallback = ({ data }: { data: Track[] }) => setAllTracks(data);
 
         API.addEventListener("nowplayingposition", setTrackTime);
         API.addEventListener("nowplayingtrack", setNowPlayingTrack);
@@ -83,7 +85,6 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
         API.addEventListener("playerstatus", setPlayerStatusFromApiData);
         API.addEventListener("playershuffle", playerShuffleCallback);
         API.addEventListener("playerrepeat", playerRepeatCallback);
-        API.addEventListener("browsetracks", allTracksCallback);
 
         return () => {
             API.removeEventListener("nowplayingposition", setTrackTime);
@@ -93,7 +94,6 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
             API.removeEventListener("playerstatus", setPlayerStatusFromApiData);
             API.removeEventListener("playershuffle", playerShuffleCallback);
             API.removeEventListener("playerrepeat", playerRepeatCallback);
-            API.removeEventListener("browsetracks", allTracksCallback);
         };
     }, [API, setTrackTime, setPlayerStatus, setNowPlayingTrack, setAllTracks]);
 

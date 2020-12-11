@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useReducer, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { MusicBeeAPIContext, Track } from "../Logic/MusicBeeAPI";
 import SongList from "../Components/SongList";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
@@ -54,19 +54,8 @@ const SongMenu: React.FC<{
 };
 
 const SongPicker: React.FC<{ searchText?: string }> = props => {
-    const forceUpdate = useReducer(x => !x, true)[1];
-
     const API = useContext(MusicBeeAPIContext);
     const { allTracks } = useContext(MusicBeeInfoContext);
-
-    useEffect(() => {
-        // Reload on update
-        API.addEventListener("browsetracks", forceUpdate);
-
-        if (allTracks.length === 0) {
-            API.browseTracks();
-        }
-    }, [API, allTracks, forceUpdate]);
 
     const filteredTracks = useMemo(
         () => (allTracks ? allTracks.filter(track => doesTrackMatchQuery(track, props.searchText)) : []),
