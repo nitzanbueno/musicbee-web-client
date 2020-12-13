@@ -50,20 +50,20 @@ const SongListItem: React.FC<{
     );
 };
 
-interface SongListProps {
-    songs: any[];
-    titleKey: string;
-    artistKey: string;
-    pathKey: string;
-    onSet: (index: number) => void;
+interface SongListProps<T> {
+    songs: T[];
+    titleKey?: string;
+    artistKey?: string;
+    pathKey?: string;
+    onPlay: (song: T, index: number) => void;
     onTogglePlayPause: () => void;
     flex?: boolean;
     songHeight?: number;
-    renderSecondaryAction?: (index: number) => ReactNode;
+    renderSecondaryAction?: (song: T, index: number) => ReactNode;
 }
 
-const SongList: React.FC<SongListProps> = props => {
-    const { songHeight = 40, titleKey, artistKey, pathKey, renderSecondaryAction } = props;
+function SongList<T>(props: SongListProps<T>): React.ReactElement<any, any> {
+    const { songHeight = 60, titleKey = "title", artistKey = "artist", pathKey = "src", renderSecondaryAction } = props;
     const { nowPlayingTrack, playerStatus } = useContext(MusicBeeInfoContext);
     const classes = useStyles();
 
@@ -76,7 +76,7 @@ const SongList: React.FC<SongListProps> = props => {
             onPlay = props.onTogglePlayPause;
             paused = playerStatus.playerState !== "playing";
         } else {
-            onPlay = () => props.onSet(index);
+            onPlay = () => props.onPlay(song, index);
         }
 
         return (
@@ -89,7 +89,7 @@ const SongList: React.FC<SongListProps> = props => {
                 style={style}
                 itemHeight={songHeight}
                 classes={classes}
-                renderSecondaryAction={renderSecondaryAction && (() => renderSecondaryAction(index))}
+                renderSecondaryAction={renderSecondaryAction && (() => renderSecondaryAction(song, index))}
             />
         );
     }
@@ -103,6 +103,6 @@ const SongList: React.FC<SongListProps> = props => {
             rowRenderer={renderRow}
         />
     );
-};
+}
 
 export default SongList;

@@ -1,27 +1,28 @@
-import { IconButton, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
-import { PlaylistPlay } from "@material-ui/icons";
+import { IconButton, makeStyles, Typography } from "@material-ui/core";
+import { ArrowBack, PlaylistPlay } from "@material-ui/icons";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
-import VirtualList from "../Components/VirtualList";
-
-const PLAYLIST_ITEM_HEIGHT = 60;
+import SongContainerList from "../Components/SongContainerList";
+import SongList from "../Components/SongList";
+import { MusicBeeAPIContext, Playlist, Track } from "../Logic/MusicBeeAPI";
 
 const useStyles = makeStyles({
     playlistList: {
         width: "100%",
         height: "100%",
+        display: "flex",
+        flexDirection: "column",
     },
-    playlistItem: {
-        cursor: "pointer",
-        userSelect: "none",
-        height: PLAYLIST_ITEM_HEIGHT + "px",
+    row: {
+        display: "flex",
+        alignItems: "center",
+        height: 50,
+    },
+    songList: {
+        flexGrow: 1,
+        width: "100%",
+        textAlign: "center",
     },
 });
-
-interface Playlist {
-    name: string;
-    url: string;
-}
 
 function doesPlaylistMatchSearchText(playlist: Playlist, searchText?: string) {
     if (!searchText) return true;
@@ -33,47 +34,67 @@ const Playlists: React.FC<{ searchText?: string }> = props => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const API = useContext(MusicBeeAPIContext);
 
+    const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState<Track[] | null>(null);
+
     const classes = useStyles();
 
-    function handlePlaylists({ data }) {
-        setPlaylists(data);
-    }
-
     useEffect(() => {
-        API.addEventListener("playlistlist", handlePlaylists);
-        API.sendMessage("playlistlist", { offset: 0, limit: 1000 });
-        return () => API.removeEventListener("playlistlist", setPlaylists);
+        API.browsePlaylistsAsync().then(setPlaylists);
     }, [API, setPlaylists]);
 
-    const filteredPlaylists = useMemo(() => playlists.filter(l => doesPlaylistMatchSearchText(l, props.searchText)), [
+    function handleOpen(playlist: Playlist) {
+        API.getPlaylistTracksAsync(playlist.url).then(setSelectedPlaylistTracks);
+    }
+
+    function handleClose() {
+        setSelectedPlaylistTracks(null);
+    }
+
+    async function handlePlaylistSongPlay(playlist: Playlist, index: number) {
+        await API.playPlaylistAsync(playlist.url);
+        API.playFromNowPlayingList(index + 1);
+    }
+
+    const filteredPlaylists = useMemo(() => playlists.filter(pl => doesPlaylistMatchSearchText(pl, props.searchText)), [
         props.searchText,
         playlists,
     ]);
 
     return (
-        <VirtualList
-            rowHeight={PLAYLIST_ITEM_HEIGHT}
-            rowCount={filteredPlaylists.length}
-            rowRenderer={({ index, style }) => {
-                const playlist = filteredPlaylists[index];
-
-                return (
-                    <ListItem
-                        onDoubleClick={() => API.playPlaylist(playlist.url)}
-                        key={index}
-                        className={classes.playlistItem}
-                        style={style}
-                    >
-                        <ListItemIcon>
-                            <IconButton onClick={() => API.playPlaylist(playlist.url)}>
-                                <PlaylistPlay />
-                            </IconButton>
-                        </ListItemIcon>
-                        <ListItemText primary={playlist.name} />
-                    </ListItem>
-                );
-            }}
-        />
+        <SongContainerList
+            items={filteredPlaylists}
+            icon={PlaylistPlay}
+            getTitle={pl => pl.name}
+            onDoubleClick={pl => API.playPlaylist(pl.url)}
+            onIconClick={pl => API.playPlaylist(pl.url)}
+            onOpen={handleOpen}
+            onClose={handleClose}
+        >
+            {({ item: pl, close }) => (
+                <div className={classes.playlistList}>
+                    <div className={classes.row}>
+                        <IconButton onClick={close}>
+                            <ArrowBack />
+                        </IconButton>
+                        <Typography variant="h5">{pl.name}</Typography>
+                        <IconButton onClick={() => API.playPlaylist(pl.url)}>
+                            <PlaylistPlay fontSize="large" />
+                        </IconButton>
+                    </div>
+                    <div className={classes.songList}>
+                        {selectedPlaylistTracks ? (
+                            <SongList
+                                onTogglePlayPause={API.playPause}
+                                onPlay={(_, index) => handlePlaylistSongPlay(pl, index)}
+                                songs={selectedPlaylistTracks}
+                            />
+                        ) : (
+                            "Loading..."
+                        )}
+                    </div>
+                </div>
+            )}
+        </SongContainerList>
     );
 };
 

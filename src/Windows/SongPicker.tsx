@@ -62,9 +62,7 @@ const SongPicker: React.FC<{ searchText?: string }> = props => {
         [allTracks, props.searchText]
     );
 
-    function renderSecondaryAction(index) {
-        const track = filteredTracks[index];
-
+    function renderSecondaryAction(track: Track) {
         return (
             <SongMenu
                 queueAlbum={() => {}}
@@ -77,12 +75,11 @@ const SongPicker: React.FC<{ searchText?: string }> = props => {
 
     return (
         <SongList
-            songHeight={60}
             songs={filteredTracks}
             artistKey="artist"
             titleKey="title"
             pathKey="src"
-            onSet={index => API.playTrackNow(filteredTracks[index])}
+            onPlay={API.playTrackNow}
             onTogglePlayPause={API.playPause}
             renderSecondaryAction={renderSecondaryAction}
         />

@@ -22,6 +22,11 @@ export interface DataPage<T> {
     total: number;
 }
 
+export interface Playlist {
+    name: string;
+    url: string;
+}
+
 export class MusicBeeAPI {
     webSocket: WebSocket;
     didRequestDisconnect = false;
@@ -146,6 +151,10 @@ export class MusicBeeAPI {
         return this.browsePaginatedDataAsync("browsegenres");
     }
 
+    browsePlaylistsAsync(): Promise<Playlist[]> {
+        return this.browsePaginatedDataAsync("playlistlist");
+    }
+
     playPause = () => {
         this.sendMessage("playerplaypause");
     };
@@ -153,6 +162,18 @@ export class MusicBeeAPI {
     playPlaylist = (url: string) => {
         this.sendMessage("playlistplay", url);
     };
+
+    playPlaylistAsync = (url: string) => {
+        return this.sendMessageAndGetResponseAsync("playlistplay", url);
+    };
+
+    playFromNowPlayingList(position: number) {
+        this.sendMessage("nowplayinglistplay", position);
+    }
+
+    getPlaylistTracksAsync(url: string) {
+        return this.sendMessageAndGetResponseAsync<Track[]>("playlistlistsongs", url);
+    }
 
     toggleShuffle = () => {
         this.sendMessage("playershuffle", "toggle");

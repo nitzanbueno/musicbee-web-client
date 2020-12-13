@@ -60,13 +60,12 @@ const NowPlayingList: React.FC<{}> = () => {
                 Now Playing
             </Typography>
             <SongList
-                songHeight={60}
                 flex
                 songs={nowPlayingSongs}
                 pathKey="Path"
                 titleKey="Title"
                 artistKey="Artist"
-                onSet={index => API.sendMessage("nowplayinglistplay", nowPlayingSongs[index].Position)}
+                onPlay={song => API.playFromNowPlayingList(song.Position)}
                 onTogglePlayPause={API.playPause}
             />
         </div>
