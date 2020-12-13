@@ -1,8 +1,9 @@
-import { AppBar, fade, InputBase, makeStyles, Tab, Tabs } from "@material-ui/core";
-import React, { useState } from "react";
-import { Search as SearchIcon } from "@material-ui/icons";
+import { AppBar, fade, IconButton, InputBase, makeStyles, Tab, Tabs } from "@material-ui/core";
+import React, { useContext, useState } from "react";
+import { ExitToApp, Search as SearchIcon } from "@material-ui/icons";
 import Playlists from "./Playlists";
 import SongPicker from "./SongPicker";
+import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -58,6 +59,9 @@ const useStyles = makeStyles(theme => ({
             width: "20ch",
         },
     },
+    right: {
+        marginLeft: "auto",
+    },
 }));
 
 const SearchBar: React.FC<{
@@ -87,6 +91,7 @@ const MainWindow: React.FC<{}> = () => {
 
     const [tabIndex, setTabIndex] = useState(0);
     const [searchText, setSearchText] = useState("");
+    const API = useContext(MusicBeeAPIContext);
 
     function switchTab(_: any, tab: number) {
         setTabIndex(tab);
@@ -101,6 +106,9 @@ const MainWindow: React.FC<{}> = () => {
                     <Tab label="Playlists" />
                 </Tabs>
                 <SearchBar classes={classes} value={searchText} onChange={e => setSearchText(e.target.value)} />
+                <IconButton className={classes.right} onClick={() => API.disconnect()}>
+                    <ExitToApp />
+                </IconButton>
             </AppBar>
 
             {tabIndex === 0 && <SongPicker searchText={searchText} />}

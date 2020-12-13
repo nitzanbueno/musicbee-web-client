@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 const ADDRESS_KEY = "LastConnectedAddress";
 const DEFAULT_ADDRESS = "ws://0.0.0.0:3000";
 
-const ConnectForm: React.FC<{ disconnected: boolean; onConnect: (API: MusicBeeAPI) => void }> = props => {
+const ConnectForm: React.FC<{ error: boolean; onConnect: (API: MusicBeeAPI) => void }> = props => {
     const [address, setAddress] = useState(() => localStorage.getItem(ADDRESS_KEY) ?? DEFAULT_ADDRESS);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ const ConnectForm: React.FC<{ disconnected: boolean; onConnect: (API: MusicBeeAP
 
     return (
         <form className={classes.container} onSubmit={connect}>
-            {props.disconnected && <ErrorText>The server has disconnected. Please reconnect.</ErrorText>}
+            {props.error && <ErrorText>The server has disconnected. Please reconnect.</ErrorText>}
             Connect to:
             <TextField variant="outlined" value={address} onChange={e => setAddress(e.target.value)} />
             <Button type="submit" variant="contained">

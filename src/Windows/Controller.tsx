@@ -27,26 +27,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Controller: React.FC<{}> = () => {
-    const [disconnected, setDisconnected] = useState(false);
+    const [error, setError] = useState(false);
 
     const [API, setAPI] = useState<MusicBeeAPI | null>(null);
 
     function handleLoad(newAPI: MusicBeeAPI) {
         setAPI(newAPI);
-        setDisconnected(false);
+        setError(false);
     }
 
     useEffect(() => {
         if (!API) return;
 
         function handleError() {
-            setDisconnected(true);
+            setError(!API?.didRequestDisconnect);
             setAPI(null);
         }
 
         API.addErrorListener(handleError);
         return () => API.removeErrorListener(handleError);
-    }, [API, setDisconnected]);
+    }, [API, setError]);
 
     const classes = useStyles();
 
@@ -64,7 +64,7 @@ const Controller: React.FC<{}> = () => {
                 </MusicBeeAPIContext.Provider>
             ) : (
                 <>
-                    <ConnectForm disconnected={disconnected} onConnect={handleLoad} />
+                    <ConnectForm error={error} onConnect={handleLoad} />
                 </>
             )}
         </div>

@@ -24,6 +24,7 @@ export interface DataPage<T> {
 
 export class MusicBeeAPI {
     webSocket: WebSocket;
+    didRequestDisconnect = false;
 
     constructor(public address: string, onLoad: () => void, onError: (e: Event) => void) {
         this.webSocket = new WebSocket(address);
@@ -63,6 +64,11 @@ export class MusicBeeAPI {
             console.log("Message:", parsedMessageData);
         }
     };
+
+    disconnect() {
+        this.didRequestDisconnect = true;
+        this.webSocket.close();
+    }
 
     addEventListener(message: string, listener: EventListener) {
         if (!this.eventListeners[message]) this.eventListeners[message] = [];
