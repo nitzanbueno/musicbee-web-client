@@ -12,7 +12,7 @@ const OverflowScroller = props => {
 
         if (!big || !small) return;
         setScroll(big.scrollWidth > small.clientWidth);
-    });
+    }, [props.children]);
 
     return (
         <span ref={smallScrollRef} className="no-wrap">
