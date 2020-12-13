@@ -13,7 +13,17 @@ interface Props {
 const VirtualList: React.FC<Props> = props => {
     const { flex, ...listProps } = props;
 
-    return <SizeCalculator flex={flex}>{size => <List {...size} {...listProps} />}</SizeCalculator>;
+    return (
+        <SizeCalculator flex={flex}>
+            {size => (
+                <List
+                    {...size}
+                    style={{ outline: "none" }} // Without this prop, the list gets a fugly border when clicked
+                    {...listProps}
+                />
+            )}
+        </SizeCalculator>
+    );
 };
 
 export default VirtualList;
