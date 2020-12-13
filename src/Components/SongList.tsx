@@ -37,7 +37,7 @@ const SongListItem: React.FC<{
 
     return (
         <div style={{ ...props.style, height: props.itemHeight }}>
-            <ListItem>
+            <ListItem onDoubleClick={props.onPlay}>
                 <ListItemIcon>
                     <IconButton onClick={props.onPlay}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
                 </ListItemIcon>
