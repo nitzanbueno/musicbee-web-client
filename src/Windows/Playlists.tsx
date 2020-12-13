@@ -72,7 +72,7 @@ const Playlists: React.FC<{ searchText?: string }> = props => {
                     </ListItem>
                 );
             }}
-        ></VirtualList>
+        />
     );
 };
 
