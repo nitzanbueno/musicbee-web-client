@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
 
 const Controller: React.FC<{}> = () => {
     const [error, setError] = useState(false);
+    const [shouldAutoConnect, setShouldAutoConnect] = useState(true);
 
     const [API, setAPI] = useState<MusicBeeAPI | null>(null);
 
@@ -40,6 +41,9 @@ const Controller: React.FC<{}> = () => {
         if (!API) return;
 
         function handleError() {
+            // If the user disconnected, don't try to reconnect.
+            // If the server was closed, it makes sense to try to reconnect.
+            setShouldAutoConnect(!API?.didRequestDisconnect);
             setError(!API?.didRequestDisconnect);
             setAPI(null);
         }
@@ -64,7 +68,7 @@ const Controller: React.FC<{}> = () => {
                 </MusicBeeAPIContext.Provider>
             ) : (
                 <>
-                    <ConnectForm error={error} onConnect={handleLoad} />
+                    <ConnectForm autoConnect={shouldAutoConnect} error={error} onConnect={handleLoad} />
                 </>
             )}
         </div>

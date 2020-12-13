@@ -1,5 +1,6 @@
 import { Button, CircularProgress, makeStyles, TextField } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { isGetAccessor } from "typescript";
 import ErrorText from "../Components/ErrorText";
 import { MusicBeeAPI } from "../Logic/MusicBeeAPI";
 
@@ -20,8 +21,12 @@ const useStyles = makeStyles(theme => ({
 const ADDRESS_KEY = "LastConnectedAddress";
 const DEFAULT_ADDRESS = "ws://0.0.0.0:3000";
 
-const ConnectForm: React.FC<{ error: boolean; onConnect: (API: MusicBeeAPI) => void }> = props => {
-    const [address, setAddress] = useState(() => localStorage.getItem(ADDRESS_KEY) ?? DEFAULT_ADDRESS);
+const ConnectForm: React.FC<{
+    autoConnect: boolean;
+    error: boolean;
+    onConnect: (API: MusicBeeAPI) => void;
+}> = props => {
+    const [address, setAddress] = useState(() => localStorage.getItem(ADDRESS_KEY));
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -38,21 +43,30 @@ const ConnectForm: React.FC<{ error: boolean; onConnect: (API: MusicBeeAPI) => v
         props.onConnect(API);
     }
 
-    function connect(e: React.FormEvent) {
-        e.preventDefault();
+    function connect(e?: React.FormEvent) {
+        e?.preventDefault();
 
         // This is a sketchy line
-        const API = new MusicBeeAPI(address, () => handleLoad(API), handleError);
+        const API = new MusicBeeAPI(address ?? DEFAULT_ADDRESS, () => handleLoad(API), handleError);
 
         setLoading(true);
         setError(false);
     }
 
+    useEffect(() => {
+        // If we should autoconnect, try connecting to the previous address on load (if exists)
+        if (props.autoConnect) connect();
+    }, []);
+
     return (
         <form className={classes.container} onSubmit={connect}>
             {props.error && <ErrorText>The server has disconnected. Please reconnect.</ErrorText>}
             Connect to:
-            <TextField variant="outlined" value={address} onChange={e => setAddress(e.target.value)} />
+            <TextField
+                variant="outlined"
+                value={address ?? DEFAULT_ADDRESS}
+                onChange={e => setAddress(e.target.value)}
+            />
             <Button type="submit" variant="contained">
                 Connect
             </Button>
