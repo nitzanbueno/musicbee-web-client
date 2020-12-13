@@ -13,6 +13,7 @@ const useStyles = makeStyles({
     },
     playlistItem: {
         cursor: "pointer",
+        userSelect: "none",
         height: PLAYLIST_ITEM_HEIGHT + "px",
     },
 });

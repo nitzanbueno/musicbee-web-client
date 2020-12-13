@@ -12,10 +12,11 @@ import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 import VirtualList from "./VirtualList";
 
 const useStyles = makeStyles(() => ({
-    truncate: {
+    songItemText: {
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",
+        userSelect: "none",
     },
     songList: {
         listStyleType: "none", // For some reason the bullet points show on Chrome...
@@ -40,7 +41,7 @@ const SongListItem: React.FC<{
                 <ListItemIcon>
                     <IconButton onClick={props.onPlay}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
                 </ListItemIcon>
-                <ListItemText primary={props.title} secondary={props.artist} className={props.classes.truncate} />
+                <ListItemText primary={props.title} secondary={props.artist} className={props.classes.songItemText} />
                 {props.renderSecondaryAction ? (
                     <ListItemSecondaryAction children={props.renderSecondaryAction()} />
                 ) : null}
