@@ -1,7 +1,8 @@
-import { makeStyles, Typography } from "@material-ui/core";
+import { IconButton, makeStyles, Typography } from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
 import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
 import SongList from "../Components/SongList";
+import { Close } from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -54,6 +55,14 @@ const NowPlayingList: React.FC<{}> = () => {
         return () => API.removeEventListener("nowplayinglist", handleNowPlayingList);
     }, [API]);
 
+    function renderRemoveButton(_, index: number) {
+        return (
+            <IconButton onClick={() => API.removeFromNowPlayingList(index)}>
+                <Close />
+            </IconButton>
+        );
+    }
+
     return (
         <div className={classes.container}>
             <Typography variant="h4" className={classes.title}>
@@ -67,6 +76,7 @@ const NowPlayingList: React.FC<{}> = () => {
                 artistKey="Artist"
                 onPlay={song => API.playFromNowPlayingList(song.Position)}
                 onTogglePlayPause={API.playPause}
+                renderSecondaryAction={renderRemoveButton}
             />
         </div>
     );

@@ -171,6 +171,10 @@ export class MusicBeeAPI {
         this.sendMessage("nowplayinglistplay", position);
     }
 
+    removeFromNowPlayingList(position: number) {
+        this.sendMessage("nowplayinglistremove", position);
+    }
+
     getPlaylistTracksAsync(url: string) {
         return this.sendMessageAndGetResponseAsync<Track[]>("playlistlistsongs", url);
     }
