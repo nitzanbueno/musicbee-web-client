@@ -16,7 +16,8 @@ interface Props<T> {
     items: T[];
     onDoubleClick: (item: T) => void;
     onIconClick: (item: T) => void;
-    getTitle: (item: T) => string;
+    getTitle: (item: T) => React.ReactNode;
+    getSubtitle?: (item: T) => React.ReactNode;
     icon: typeof SvgIcon;
     children?: (props: { item: T; close: () => void }) => React.ReactElement<any, any> | null;
     onOpen?: (item: T) => void;
@@ -71,7 +72,7 @@ function SongContainerList<T>(props: Props<T>): React.ReactElement<any, any> | n
                                 <props.icon />
                             </IconButton>
                         </ListItemIcon>
-                        <ListItemText primary={props.getTitle(item)} />
+                        <ListItemText primary={props.getTitle(item)} secondary={props.getSubtitle?.(item)} />
                     </ListItem>
                 );
             }}

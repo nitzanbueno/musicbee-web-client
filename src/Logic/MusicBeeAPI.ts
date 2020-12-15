@@ -135,10 +135,6 @@ export class MusicBeeAPI {
         return result;
     }
 
-    browseAlbumsAsync() {
-        return this.browsePaginatedDataAsync("browsealbums");
-    }
-
     browseArtistsAsync() {
         return this.browsePaginatedDataAsync("browseartists");
     }
@@ -195,13 +191,13 @@ export class MusicBeeAPI {
         this.sendMessage("playernext");
     };
 
-    queueTracks = (queueType: QueueType, ...tracks: Track[]) => {
+    queueTracksAsync = (queueType: QueueType, ...tracks: Track[]): Promise<void> => {
         const data = { data: tracks.map(track => track.src), queue: queueType, play: null };
-        this.sendMessage("nowplayingqueue", data);
+        return this.sendMessageAndGetResponseAsync("nowplayingqueue", data);
     };
 
-    playTrackNow = (track: Track) => {
-        this.queueTracks("now", track);
+    playTrackNowAsync = (track: Track): Promise<void> => {
+        return this.queueTracksAsync("now", track);
     };
 }
 

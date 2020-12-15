@@ -66,9 +66,9 @@ const SongPicker: React.FC<{ searchText?: string }> = props => {
         return (
             <SongMenu
                 queueAlbum={() => {}}
-                queueNext={() => API.queueTracks("next", track)}
-                queueLast={() => API.queueTracks("last", track)}
-                queueNextAndPlay={() => API.queueTracks("now", track)} // Doesn't actually queue next and play, shhhhh
+                queueNext={() => API.queueTracksAsync("next", track)}
+                queueLast={() => API.queueTracksAsync("last", track)}
+                queueNextAndPlay={() => API.queueTracksAsync("now", track)} // Doesn't actually queue next and play, shhhhh
             />
         );
     }
@@ -79,7 +79,7 @@ const SongPicker: React.FC<{ searchText?: string }> = props => {
             artistKey="artist"
             titleKey="title"
             pathKey="src"
-            onPlay={API.playTrackNow}
+            onPlay={API.playTrackNowAsync}
             onTogglePlayPause={API.playPause}
             renderSecondaryAction={renderSecondaryAction}
         />

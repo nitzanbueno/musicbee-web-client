@@ -4,6 +4,7 @@ import { ExitToApp, Search as SearchIcon } from "@material-ui/icons";
 import Playlists from "./Playlists";
 import SongPicker from "./SongPicker";
 import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
+import Albums from "./Albums";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -101,9 +102,10 @@ const MainWindow: React.FC<{}> = () => {
     return (
         <div className={classes.container}>
             <AppBar className={classes.appBar} position="static">
-                <Tabs value={tabIndex} onChange={switchTab} aria-label="simple tabs example">
+                <Tabs value={tabIndex} onChange={switchTab} aria-label="MusicBee tabs">
                     <Tab label="Songs" />
                     <Tab label="Playlists" />
+                    <Tab label="Albums" />
                 </Tabs>
                 <SearchBar classes={classes} value={searchText} onChange={e => setSearchText(e.target.value)} />
                 <IconButton className={classes.right} onClick={() => API.disconnect()}>
@@ -113,6 +115,7 @@ const MainWindow: React.FC<{}> = () => {
 
             {tabIndex === 0 && <SongPicker searchText={searchText} />}
             {tabIndex === 1 && <Playlists searchText={searchText} />}
+            {tabIndex === 2 && <Albums searchText={searchText} />}
         </div>
     );
 };
