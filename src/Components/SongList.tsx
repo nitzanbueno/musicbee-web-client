@@ -27,7 +27,8 @@ const SongListItem: React.FC<{
     title: string;
     artist: string;
     itemHeight: number;
-    onPlay: () => void;
+    onClickIcon: () => void;
+    onDoubleClick: () => void;
     onContextMenu?: (e: React.MouseEvent<any>) => void;
     paused?: boolean;
     style: any;
@@ -44,9 +45,9 @@ const SongListItem: React.FC<{
 
     return (
         <div style={{ ...props.style, height: props.itemHeight }}>
-            <ListItem onDoubleClick={props.onPlay} onContextMenu={onContextMenu}>
+            <ListItem onDoubleClick={props.onDoubleClick} onContextMenu={onContextMenu}>
                 <ListItemIcon>
-                    <IconButton onClick={props.onPlay}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
+                    <IconButton onClick={props.onClickIcon}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
                 </ListItemIcon>
                 <ListItemText primary={props.title} secondary={props.artist} className={props.classes.songItemText} />
                 {props.renderSecondaryAction ? (
@@ -77,21 +78,16 @@ function SongList<T>(props: SongListProps<T>): React.ReactElement<any, any> {
 
     function renderRow({ index, key, style }: { index: number; key: any; style: any }) {
         const song = props.songs[index];
-        let onPlay: () => void;
-        let paused: boolean | undefined = undefined;
-
-        if (song[pathKey] === nowPlayingTrack?.path) {
-            onPlay = props.onTogglePlayPause;
-            paused = playerStatus.playerState !== "playing";
-        } else {
-            onPlay = () => props.onPlay(song, index);
-        }
+        const onPlay = () => props.onPlay(song, index);
+        const paused = playerStatus.playerState !== "playing";
+        const isPlaying = song[pathKey] === nowPlayingTrack?.path;
 
         return (
             <SongListItem
-                onPlay={onPlay}
+                onClickIcon={isPlaying ? props.onTogglePlayPause : onPlay}
+                onDoubleClick={onPlay}
                 onContextMenu={props.onContextMenu && (e => props.onContextMenu?.(e, song, index))}
-                paused={paused}
+                paused={isPlaying ? paused : undefined}
                 title={song[titleKey]}
                 artist={song[artistKey]}
                 key={key}
