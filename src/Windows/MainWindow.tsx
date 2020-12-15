@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SearchBar: React.FC<{
-    classes: any;
+    classes: ReturnType<typeof useStyles>;
     value: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }> = ({ classes, value, onChange }) => (
@@ -94,7 +94,7 @@ const MainWindow: React.FC<{}> = () => {
     const [searchText, setSearchText] = useState("");
     const API = useContext(MusicBeeAPIContext);
 
-    function switchTab(_: any, tab: number) {
+    function switchTab(_: unknown, tab: number) {
         setTabIndex(tab);
         setSearchText("");
     }

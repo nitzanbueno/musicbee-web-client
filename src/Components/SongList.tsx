@@ -32,7 +32,7 @@ const SongListItem: React.FC<{
     onContextMenu?: (e: React.MouseEvent<any>) => void;
     paused?: boolean;
     style: any;
-    classes: any;
+    classes: ReturnType<typeof useStyles>;
     renderSecondaryAction?: () => ReactNode;
 }> = props => {
     const { paused = true } = props;
@@ -76,7 +76,7 @@ function SongList<T>(props: SongListProps<T>): React.ReactElement<any, any> {
     const { nowPlayingTrack, playerStatus } = useContext(MusicBeeInfoContext);
     const classes = useStyles();
 
-    function renderRow({ index, key, style }: { index: number; key: any; style: any }) {
+    function renderRow({ index, key, style }: { index: number; key: string | number; style: any }) {
         const song = props.songs[index];
         const onPlay = () => props.onPlay(song, index);
         const paused = playerStatus.playerState !== "playing";

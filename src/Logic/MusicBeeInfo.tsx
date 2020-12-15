@@ -18,6 +18,14 @@ export interface PlayerStatus {
     playerVolume: string;
 }
 
+export interface APIPlayerStatus {
+    playermute: boolean;
+    playerrepeat: string;
+    playershuffle: string;
+    playerstate: "playing" | "paused" | "stopped" | "";
+    playervolume: string;
+}
+
 export interface MusicBeeInfo {
     nowPlayingTrack: NowPlayingTrack | null;
     trackTime: { current: number; total: number } | null;
@@ -50,7 +58,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
 
     const API = useContext(MusicBeeAPIContext);
 
-    function setPlayerStatusFromApiData(data: any) {
+    function setPlayerStatusFromApiData(data: APIPlayerStatus) {
         const { playerstate, playerrepeat, playershuffle, playermute, playervolume } = data;
         setPlayerStatus({
             playerState: playerstate,
