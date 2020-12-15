@@ -184,7 +184,7 @@ const PlayerControls: React.FC<{}> = () => {
                     onChange={(_, value) => setLocalVolume(value as number)}
                     onChangeCommitted={(_, value) => API.setVolume(value as number)}
                 />
-                {playerVolume}
+                <span style={{ width: "1.3em" }}>{localVolume}</span>
             </div>
         </div>
     );
