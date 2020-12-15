@@ -30,13 +30,13 @@ const useStyles = makeStyles(theme => ({
     },
     seek: {
         margin: "0px 10px",
-        color: theme.palette.primary.light,
+        color: theme.palette.primary.main,
     },
     volumeSlider: {
         width: 200,
         marginRight: 10,
         marginLeft: 10,
-        color: theme.palette.primary.light,
+        color: theme.palette.primary.main,
     },
     buttonGroup: {
         display: "flex",
@@ -62,11 +62,11 @@ const useStyles = makeStyles(theme => ({
         alignItems: "center",
     },
     controlButton: {
-        color: theme.palette.primary.light,
+        color: theme.palette.primary.main,
         margin: "0 -5px",
     },
     onButton: {
-        color: theme.palette.secondary.light,
+        color: theme.palette.primary.main,
     },
     offButton: {
         color: theme.palette.common.white,

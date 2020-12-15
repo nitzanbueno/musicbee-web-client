@@ -102,7 +102,7 @@ const MainWindow: React.FC<{}> = () => {
     return (
         <div className={classes.container}>
             <AppBar className={classes.appBar} position="static">
-                <Tabs value={tabIndex} onChange={switchTab} aria-label="MusicBee tabs">
+                <Tabs value={tabIndex} onChange={switchTab} aria-label="MusicBee tabs" indicatorColor="primary">
                     <Tab label="Songs" />
                     <Tab label="Playlists" />
                     <Tab label="Albums" />
