@@ -44,6 +44,7 @@ function SongContainerList<T>(props: Props<T>): React.ReactElement<any, any> | n
         setChosenItem(item);
     }
 
+    // eslint-disable-next-line
     useEffect(close, [props.items, setChosenItem]);
 
     return chosenItem ? (

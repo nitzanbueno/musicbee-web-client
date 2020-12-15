@@ -40,20 +40,20 @@ const NowPlayingList: React.FC<{}> = () => {
     const [nowPlayingSongs, setNowPlayingSongs] = useState<NowPlayingSong[]>([]);
     const classes = useStyles();
 
-    function handleNowPlayingList(data: NowPlayingSong[]) {
-        setNowPlayingSongs(data);
-    }
-
-    function refreshNowPlayingList() {
-        API.sendMessage("nowplayinglist", "");
-    }
-
     useEffect(() => {
+        function handleNowPlayingList(data: NowPlayingSong[]) {
+            setNowPlayingSongs(data);
+        }
+
+        function refreshNowPlayingList() {
+            API.sendMessage("nowplayinglist", "");
+        }
+
         API.addEventListener("nowplayinglist", handleNowPlayingList);
         API.addEventListener("nowplayinglistchanged", refreshNowPlayingList);
         refreshNowPlayingList();
         return () => API.removeEventListener("nowplayinglist", handleNowPlayingList);
-    }, [API]);
+    }, [API, setNowPlayingSongs]);
 
     function renderRemoveButton(_, index: number) {
         return (

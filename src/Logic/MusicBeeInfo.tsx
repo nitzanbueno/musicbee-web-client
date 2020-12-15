@@ -95,7 +95,9 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
             API.removeEventListener("playershuffle", playerShuffleCallback);
             API.removeEventListener("playerrepeat", playerRepeatCallback);
         };
-    }, [API, setTrackTime, setPlayerStatus, setNowPlayingTrack, setAllTracks]);
+    }, 
+    // eslint-disable-next-line
+    [API, setTrackTime, setPlayerStatus, setNowPlayingTrack, setAllTracks]);
 
     return (
         <MusicBeeInfoContext.Provider value={{ nowPlayingTrack, trackTime, playerStatus, allTracks }}>

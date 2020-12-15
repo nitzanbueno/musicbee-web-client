@@ -1,6 +1,5 @@
 import { Button, CircularProgress, makeStyles, TextField } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import { isGetAccessor } from "typescript";
 import ErrorText from "../Components/ErrorText";
 import { MusicBeeAPI } from "../Logic/MusicBeeAPI";
 
@@ -56,7 +55,9 @@ const ConnectForm: React.FC<{
     useEffect(() => {
         // If we should autoconnect, try connecting to the previous address on load (if exists)
         if (props.autoConnect) connect();
-    }, []);
+
+        // eslint-disable-next-line
+    }, [props.autoConnect]);
 
     return (
         <form className={classes.container} onSubmit={connect}>

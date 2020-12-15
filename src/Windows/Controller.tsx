@@ -1,12 +1,11 @@
 import { makeStyles } from "@material-ui/core";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainWindow from "./MainWindow";
 import { MusicBeeAPI, MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
 import NowPlayingList from "./NowPlayingList";
 import PlayerControls from "../Components/PlayerControls";
 import { MusicBeeInfoProvider } from "../Logic/MusicBeeInfo";
 import ConnectForm from "./ConnectForm";
-import ErrorText from "../Components/ErrorText";
 
 const useStyles = makeStyles(theme => ({
     container: {
