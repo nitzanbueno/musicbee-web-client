@@ -28,6 +28,7 @@ const SongListItem: React.FC<{
     artist: string;
     itemHeight: number;
     onPlay: () => void;
+    onContextMenu?: (e: React.MouseEvent<any>) => void;
     paused?: boolean;
     style: any;
     classes: any;
@@ -35,9 +36,15 @@ const SongListItem: React.FC<{
 }> = props => {
     const { paused = true } = props;
 
+    function onContextMenu(e: React.MouseEvent<any>) {
+        if (!props.onContextMenu) return;
+        e.preventDefault();
+        props.onContextMenu(e);
+    }
+
     return (
         <div style={{ ...props.style, height: props.itemHeight }}>
-            <ListItem onDoubleClick={props.onPlay}>
+            <ListItem onDoubleClick={props.onPlay} onContextMenu={onContextMenu}>
                 <ListItemIcon>
                     <IconButton onClick={props.onPlay}>{paused ? <PlayArrow /> : <Pause />}</IconButton>
                 </ListItemIcon>
@@ -50,7 +57,7 @@ const SongListItem: React.FC<{
     );
 };
 
-interface SongListProps<T> {
+export interface SongListProps<T> {
     songs: T[];
     titleKey?: string;
     artistKey?: string;
@@ -60,6 +67,7 @@ interface SongListProps<T> {
     flex?: boolean;
     songHeight?: number;
     renderSecondaryAction?: (song: T, index: number) => ReactNode;
+    onContextMenu?: (e: React.MouseEvent<any>, song: T, index: number) => void;
 }
 
 function SongList<T>(props: SongListProps<T>): React.ReactElement<any, any> {
@@ -82,6 +90,7 @@ function SongList<T>(props: SongListProps<T>): React.ReactElement<any, any> {
         return (
             <SongListItem
                 onPlay={onPlay}
+                onContextMenu={props.onContextMenu && (e => props.onContextMenu?.(e, song, index))}
                 paused={paused}
                 title={song[titleKey]}
                 artist={song[artistKey]}
