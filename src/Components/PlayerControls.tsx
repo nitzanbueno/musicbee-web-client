@@ -104,6 +104,23 @@ const PlayerControls: React.FC<{}> = () => {
         return () => clearInterval(interval);
     }, [setLocalTrackTime, playerState]);
 
+    function handleKeyDown(e: KeyboardEvent) {
+        // Don't trigger events if the user is on an input field
+        // @ts-ignore
+        if (e.target?.matches('input[type="text"]')) {
+            return;
+        }
+
+        if (e.key === " ") {
+            API?.playPause();
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, []);
+
     return (
         <div className={classes.bar}>
             <div className={classes.metadata}>
