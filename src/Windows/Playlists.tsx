@@ -2,7 +2,7 @@ import { IconButton, makeStyles, Typography } from "@material-ui/core";
 import { ArrowBack, PlaylistPlay } from "@material-ui/icons";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import SongContainerList from "../Components/SongContainerList";
-import SongList from "../Components/SongList";
+import SongListWithContextMenu from "../Components/SongListWithContextMenu";
 import { MusicBeeAPIContext, Playlist, Track } from "../Logic/MusicBeeAPI";
 
 const useStyles = makeStyles({
@@ -83,8 +83,7 @@ const Playlists: React.FC<{ searchText?: string }> = props => {
                     </div>
                     <div className={classes.songList}>
                         {selectedPlaylistTracks ? (
-                            <SongList
-                                onTogglePlayPause={API.playPause}
+                            <SongListWithContextMenu
                                 onPlay={(_, index) => handlePlaylistSongPlay(pl, index)}
                                 songs={selectedPlaylistTracks}
                             />
