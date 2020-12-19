@@ -2,7 +2,7 @@ import { IconButton, makeStyles, Typography } from "@material-ui/core";
 import { Album as AlbumIcon, ArrowBack, PlayArrow } from "@material-ui/icons";
 import React, { useContext, useMemo, useState } from "react";
 import SongContainerList from "../Components/SongContainerList";
-import SongList from "../Components/SongList";
+import SongListWithContextMenu from "../Components/SongListWithContextMenu";
 import { MusicBeeAPIContext, Track } from "../Logic/MusicBeeAPI";
 import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 
@@ -16,12 +16,17 @@ const useStyles = makeStyles({
     row: {
         display: "flex",
         alignItems: "center",
-        height: 50,
+        height: 80,
     },
     songList: {
         flexGrow: 1,
         width: "100%",
         textAlign: "center",
+    },
+    albumHeader: {
+        display: "flex",
+        flexDirection: "column",
+        margin: "0 11px",
     },
 });
 
@@ -111,17 +116,17 @@ const Albums: React.FC<{ searchText?: string }> = props => {
                         <IconButton onClick={close}>
                             <ArrowBack />
                         </IconButton>
-                        <Typography variant="h5">
-                            {album.artist ?? <i>Unknown Artist</i>} - {album.title ?? <i>Unknown Album</i>}
-                        </Typography>
+                        <div className={classes.albumHeader}>
+                            <Typography variant="h5">{album.title ?? <i>Unknown Album</i>}</Typography>
+                            <Typography variant="subtitle1">{album.artist ?? <i>Unknown Artist</i>}</Typography>
+                        </div>
                         <IconButton onClick={() => playAlbum(album)}>
                             <PlayArrow fontSize="large" />
                         </IconButton>
                     </div>
                     <div className={classes.songList}>
                         {selectedAlbumTracks ? (
-                            <SongList
-                                onTogglePlayPause={API.playPause}
+                            <SongListWithContextMenu
                                 onPlay={(_, index) => handleAlbumSongPlay(album, index)}
                                 songs={selectedAlbumTracks}
                             />

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import SongList, { SongListProps } from "./SongList";
+import SongList from "./SongList";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import { MoreVert } from "@material-ui/icons";
 import { MusicBeeAPIContext, Track } from "../Logic/MusicBeeAPI";
