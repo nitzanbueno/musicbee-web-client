@@ -199,6 +199,13 @@ export class MusicBeeAPI {
     playTrackNowAsync = (track: Track): Promise<void> => {
         return this.queueTracksAsync("now", track);
     };
+
+    addToPlaylistAsync = (playlist: Playlist, ...tracks: Track[]): Promise<void> => {
+        return this.sendMessageAndGetResponseAsync("playlistaddfiles", {
+            url: playlist.url,
+            filenames: tracks.map(track => track.src),
+        });
+    };
 }
 
 // @ts-ignore

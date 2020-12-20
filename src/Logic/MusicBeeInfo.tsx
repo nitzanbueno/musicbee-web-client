@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { MusicBeeAPIContext, Track } from "./MusicBeeAPI";
+import { MusicBeeAPIContext, Playlist, Track } from "./MusicBeeAPI";
 import { useObjectReducer } from "./Utils";
 
 export interface NowPlayingTrack {
@@ -31,6 +31,7 @@ export interface MusicBeeInfo {
     trackTime: { current: number; total: number } | null;
     playerStatus: PlayerStatus;
     allTracks: Track[];
+    playlists: Playlist[];
 }
 
 const defaultContext: MusicBeeInfo = {
@@ -44,6 +45,7 @@ const defaultContext: MusicBeeInfo = {
         playerVolume: "",
     },
     allTracks: [],
+    playlists: [],
 };
 
 export const MusicBeeInfoContext = React.createContext<MusicBeeInfo>(defaultContext);
@@ -52,6 +54,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
     const [nowPlayingTrack, setNowPlayingTrack] = useState<NowPlayingTrack | null>(null);
     const [playerStatus, setPlayerStatus] = useObjectReducer(defaultContext.playerStatus);
     const [trackTime, setTrackTime] = useObjectReducer({ current: 0, total: 0 });
+    const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
     // "browsetracks" data is relatively big, so it should be kept on API level
     const [allTracks, setAllTracks] = useState<Track[]>([]);
@@ -77,6 +80,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
 
         // Browse tracks then set the result
         API.browseTracksAsync().then(setAllTracks);
+        API.browsePlaylistsAsync().then(setPlaylists);
     }, [API]);
 
     // prettier-ignore
@@ -108,7 +112,7 @@ export const MusicBeeInfoProvider: React.FC<{}> = props => {
     [API, setTrackTime, setPlayerStatus, setNowPlayingTrack, setAllTracks]);
 
     return (
-        <MusicBeeInfoContext.Provider value={{ nowPlayingTrack, trackTime, playerStatus, allTracks }}>
+        <MusicBeeInfoContext.Provider value={{ playlists, nowPlayingTrack, trackTime, playerStatus, allTracks }}>
             {props.children}
         </MusicBeeInfoContext.Provider>
     );

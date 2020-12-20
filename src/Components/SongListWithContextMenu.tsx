@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 import SongList from "./SongList";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import { MoreVert } from "@material-ui/icons";
-import { MusicBeeAPIContext, Track } from "../Logic/MusicBeeAPI";
+import { MusicBeeAPIContext, Playlist, Track } from "../Logic/MusicBeeAPI";
+import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 
 interface SongListWithContextMenuProps {
     songs: Track[];
@@ -11,9 +12,38 @@ interface SongListWithContextMenuProps {
     songHeight?: number;
 }
 
+const AddToPlaylistMenuItem: React.FC<{ onClose: () => void; addToPlaylist: (playlist: Playlist) => void }> = props => {
+    const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+    const { playlists } = useContext(MusicBeeInfoContext);
+
+    function addToPlaylist(playlist: Playlist) {
+        props.addToPlaylist(playlist);
+        props.onClose();
+    }
+
+    return (
+        <MenuItem onClick={e => setAnchorEl(e.currentTarget)}>
+            Add to playlist
+            <Menu
+                open={!!anchorEl}
+                anchorEl={anchorEl}
+                anchorOrigin={{ horizontal: "right", vertical: "top" }}
+                onClose={props.onClose}
+            >
+                {playlists.map((playlist, index) => (
+                    <MenuItem onClick={() => addToPlaylist(playlist)} key={index}>
+                        {playlist.name}
+                    </MenuItem>
+                ))}
+            </Menu>
+        </MenuItem>
+    );
+};
+
 const SongMenu: React.FC<{
     queueNext: () => void;
     queueLast: () => void;
+    addToPlaylist: (playlist: Playlist) => void;
     onClose: () => void;
     anchorEl: Element | null;
     anchorPosition?: { x: number; y: number };
@@ -60,6 +90,7 @@ const SongMenu: React.FC<{
             >
                 <MenuItem onClick={closeAndRun(props.queueNext)}>Queue Next</MenuItem>
                 <MenuItem onClick={closeAndRun(props.queueLast)}>Queue Last</MenuItem>
+                <AddToPlaylistMenuItem onClose={props.onClose} addToPlaylist={props.addToPlaylist} />
             </Menu>
         </>
     );
@@ -110,6 +141,7 @@ export default function SongListWithContextMenu(props: SongListWithContextMenuPr
             <SongMenu
                 queueNext={() => currentOpenTrack && API.queueTracksAsync("next", currentOpenTrack)}
                 queueLast={() => currentOpenTrack && API.queueTracksAsync("last", currentOpenTrack)}
+                addToPlaylist={playlist => currentOpenTrack && API.addToPlaylistAsync(playlist, currentOpenTrack)}
                 anchorEl={anchorEl}
                 anchorPosition={anchorPosition}
                 onClose={close}

@@ -1,9 +1,10 @@
 import { IconButton, makeStyles, Typography } from "@material-ui/core";
 import { ArrowBack, PlaylistPlay } from "@material-ui/icons";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import SongContainerList from "../Components/SongContainerList";
 import SongListWithContextMenu from "../Components/SongListWithContextMenu";
 import { MusicBeeAPIContext, Playlist, Track } from "../Logic/MusicBeeAPI";
+import { MusicBeeInfoContext } from "../Logic/MusicBeeInfo";
 
 const useStyles = makeStyles({
     playlistList: {
@@ -31,16 +32,12 @@ function doesPlaylistMatchSearchText(playlist: Playlist, searchText?: string) {
 }
 
 const Playlists: React.FC<{ searchText?: string }> = props => {
-    const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const { playlists } = useContext(MusicBeeInfoContext);
     const API = useContext(MusicBeeAPIContext);
 
     const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState<Track[] | null>(null);
 
     const classes = useStyles();
-
-    useEffect(() => {
-        API.browsePlaylistsAsync().then(setPlaylists);
-    }, [API, setPlaylists]);
 
     function handleOpen(playlist: Playlist) {
         API.getPlaylistTracksAsync(playlist.url).then(setSelectedPlaylistTracks);
