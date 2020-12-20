@@ -39,7 +39,15 @@ interface Album {
 function doesAlbumMatchSearchText(album: Album, searchText?: string) {
     if (!searchText) return true;
 
-    return ["title", "artist"].some(key => album[key]?.toLocaleLowerCase()?.includes(searchText.toLocaleLowerCase()));
+    const searchFields = [album.title, album.artist];
+
+    for (const word of searchText.trim().toLocaleLowerCase().split(" ")) {
+        if (searchFields.every(field => !field || !field.toLocaleLowerCase().includes(word))) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 function createAlbumsFromTracks(tracks: Track[]): Album[] {
