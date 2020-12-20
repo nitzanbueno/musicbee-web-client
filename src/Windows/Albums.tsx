@@ -46,7 +46,11 @@ function createAlbumsFromTracks(tracks: Track[]): Album[] {
     const albumMap = new Map<string, Album>();
 
     for (const track of tracks) {
-        const artistKey = track.artist?.toLocaleLowerCase().trim() ?? "Unknown Artist";
+        const artistKey = track.album_artist
+            ? track.album_artist.toLocaleLowerCase().trim()
+            : track.artist
+            ? track.artist.toLocaleLowerCase().trim()
+            : "Unknown Artist";
         const titleKey = track.album?.toLocaleLowerCase().trim() ?? "Unknown Album";
         const mapKey = JSON.stringify([artistKey, titleKey]);
 
