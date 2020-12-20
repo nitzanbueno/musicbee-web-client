@@ -129,11 +129,15 @@ const PlayerControls: React.FC<{}> = () => {
                         <OverflowScroller>
                             <b>{nowPlayingTrack.title}</b>
                         </OverflowScroller>
-                        <span>{nowPlayingTrack.artist}</span>
-                        <span>
-                            <i>{nowPlayingTrack.album}</i>
-                            {nowPlayingTrack.year ? ` (${nowPlayingTrack.year})` : ""}
-                        </span>
+                        <OverflowScroller>
+                            <span>{nowPlayingTrack.artist}</span>
+                        </OverflowScroller>
+                        <OverflowScroller>
+                            <span>
+                                <i>{nowPlayingTrack.album}</i>
+                                {nowPlayingTrack.year ? ` (${nowPlayingTrack.year})` : ""}
+                            </span>
+                        </OverflowScroller>
                     </>
                 ) : (
                     "(not playing)"
