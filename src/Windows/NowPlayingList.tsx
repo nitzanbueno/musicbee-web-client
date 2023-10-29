@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { MusicBeeAPIContext } from "../Logic/MusicBeeAPI";
 import SongList from "../Components/SongList";
 import { Close } from "@material-ui/icons";
+import { DropResult } from "react-beautiful-dnd";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -25,6 +26,14 @@ const useStyles = makeStyles(theme => ({
     title: {
         marginBottom: 10,
         marginTop: 10,
+    },
+    draggedSong: {
+        borderRadius: 10,
+        border: "solid 4px",
+        borderColor: theme.palette.grey[800],
+        paddingTop: 0,
+        paddingBottom: 0,
+        backgroundColor: theme.palette.grey[600],
     },
 }));
 
@@ -63,12 +72,29 @@ const NowPlayingList: React.FC<{}> = () => {
         );
     }
 
+    function onDrag(dropResult: DropResult) {
+        if (dropResult.destination) {
+            // To avoid flicker, immediately switch the songs until the server updates them
+            setNowPlayingSongs(songs => {
+                const newSongs = [...songs];
+                newSongs.splice(dropResult.source.index, 1);
+                newSongs.splice(dropResult.destination!.index, 0, songs[dropResult.source.index]);
+                return newSongs;
+            });
+
+            API.moveNowPlayingListSong(dropResult.source.index, dropResult.destination.index);
+        }
+    }
+
     return (
         <div className={classes.container}>
             <Typography variant="h4" className={classes.title}>
                 Now Playing
             </Typography>
             <SongList
+                draggable
+                onDragEnd={onDrag}
+                draggedClassName={classes.draggedSong}
                 flex
                 songs={nowPlayingSongs}
                 pathKey="Path"
