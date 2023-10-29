@@ -167,6 +167,10 @@ export class MusicBeeAPI {
         this.sendMessage("nowplayinglistplay", position);
     }
 
+    moveNowPlayingListSong(from: number, to: number) {
+        this.sendMessage("nowplayinglistmove", { from, to });
+    }
+
     removeFromNowPlayingList(position: number) {
         this.sendMessage("nowplayinglistremove", position);
     }
