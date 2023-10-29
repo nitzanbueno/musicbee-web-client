@@ -96,7 +96,6 @@ const MainWindow: React.FC<{}> = () => {
 
     function switchTab(_: unknown, tab: number) {
         setTabIndex(tab);
-        setSearchText("");
     }
 
     return (
