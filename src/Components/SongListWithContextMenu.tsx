@@ -130,6 +130,7 @@ export default function SongListWithContextMenu(props: SongListWithContextMenuPr
     return (
         <>
             <SongList
+                draggable={false}
                 {...props}
                 artistKey="artist"
                 titleKey="title"
