@@ -49,13 +49,13 @@ const NowPlayingList: React.FC<{}> = () => {
     const [nowPlayingSongs, setNowPlayingSongs] = useState<NowPlayingSong[]>([]);
     const classes = useStyles();
 
+    function refreshNowPlayingList() {
+        API.sendMessage("nowplayinglist", "");
+    }
+
     useEffect(() => {
         function handleNowPlayingList(data: NowPlayingSong[]) {
             setNowPlayingSongs(data);
-        }
-
-        function refreshNowPlayingList() {
-            API.sendMessage("nowplayinglist", "");
         }
 
         API.addEventListener("nowplayinglist", handleNowPlayingList);
@@ -74,7 +74,7 @@ const NowPlayingList: React.FC<{}> = () => {
 
     function onDrag(dropResult: DropResult) {
         if (dropResult.destination) {
-            // To avoid flicker, immediately switch the songs until the server updates them
+            // To avoid flicker, immediately switch the songs until the server refresh
             setNowPlayingSongs(songs => {
                 const newSongs = [...songs];
                 newSongs.splice(dropResult.source.index, 1);
@@ -83,6 +83,7 @@ const NowPlayingList: React.FC<{}> = () => {
             });
 
             API.moveNowPlayingListSong(dropResult.source.index, dropResult.destination.index);
+            refreshNowPlayingList();
         }
     }
 
