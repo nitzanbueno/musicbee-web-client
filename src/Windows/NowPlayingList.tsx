@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     },
     draggedSong: {
         borderRadius: 10,
-        border: "solid 4px",
+        border: "solid 2px",
         borderColor: theme.palette.grey[800],
         paddingTop: 0,
         paddingBottom: 0,
